@@ -54,7 +54,7 @@
 ## 8. Temporary publishing with placeholders
 
 - [x] 8.1 Add a `placeholder` flag to the manifest (alt text prefixed as placeholder, footage "none", cleared) and a script that generates labelled "SEGNAPOSTO" stills and clips at the manifest sizes; verify `pnpm build` and `pnpm check:media-rights` pass with only placeholders
-- [ ] 8.2 Open a PR to `main` (title `feat: ...`) after the pre-push security review; verify the PR exists and the branch build passes
+- [x] 8.2 Open a PR to `main` (title `feat: ...`) after the pre-push security review; verify the PR exists and the branch build passes
 - [ ] 8.3 After the user makes the repo public, enables Pages and merges, verify the site answers at `https://marcocivettini.github.io/Danamus-website/`
 
 ## Workflow follow-up
