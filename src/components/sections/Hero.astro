@@ -1,0 +1,27 @@
+---
+import DeviceFrame from "../DeviceFrame.astro";
+import Screenshot from "../Screenshot.astro";
+import Cta from "../Cta.astro";
+---
+<section id="top" class="relative pt-28 sm:pt-36" aria-labelledby="hero-title">
+  <div class="container-site text-center">
+    <p class="eyebrow" data-reveal>Per il ping pong</p>
+    <h1 id="hero-title" class="text-hero mx-auto mt-4 max-w-[14ch] text-balance" data-reveal style="--reveal-index:1">
+      Solo gli scambi. Niente&nbsp;attese.
+    </h1>
+    <p class="text-lead text-soft mx-auto mt-6 max-w-[38ch] text-pretty" data-reveal style="--reveal-index:2">
+      Danamus trova da solo ogni scambio nel video della partita e taglia i tempi morti. Poi lo rifinisci tu, nell'editor.
+    </p>
+    <div class="mt-9 flex flex-col items-center gap-4" data-reveal style="--reveal-index:3">
+      <Cta class="justify-center" />
+      <p class="text-caption text-muted">Per Mac, Windows e iPhone. Senza abbonamento.</p>
+    </div>
+  </div>
+  <div class="container-site mt-14 sm:mt-20">
+    <div class="mx-auto max-w-[1040px]" data-scroll-zoom>
+      <DeviceFrame variant="laptop" width={2880} height={1800}>
+        <Screenshot id="macos-editor" displayWidth={1040} sizes="(min-width: 1120px) 1040px, 92vw" eager />
+      </DeviceFrame>
+    </div>
+  </div>
+</section>

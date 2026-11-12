@@ -1,0 +1,46 @@
+/*
+ * Danamus design tokens for the website.
+ * Source: marcocivettini/danamus src/app/globals.css @ 5517d29 (colours, radius)
+ * and DESIGN.md (glass, spacing over boxes). Display sizes are a site-only
+ * extension: the app's type scale tops out at 48px.
+ * Motion tokens: transitions.dev (transitions-polish/_root.css).
+ */
+:root {
+  /* Colours (app) */
+  --bg: #0f0f0f;
+  --surface: #141414;
+  --surface-2: #1c1c1c;
+  --fg: #ffffff;
+  --muted: #898989; /* 5.5:1 on --bg */
+  --soft: #b4b4b4; /* secondary copy, 9.2:1 on --bg */
+  --border: #2e2e2e;
+  --accent: #00c573;
+  --accent-soft: #3cc789;
+  --radius: 0.5rem;
+
+  /* Glass (DESIGN.md) */
+  --glass-bg: rgb(15 15 15 / 0.72);
+  --glass-border: rgb(255 255 255 / 0.1);
+  --glass-blur: 20px;
+
+  /* Layout */
+  --container: 1200px;
+  --gutter: clamp(16px, 5vw, 40px);
+  --section-gap: clamp(112px, 16vw, 200px);
+
+  /* Motion (transitions.dev) */
+  --duration-stagger: 40ms;
+  --duration-micro: 80ms;
+  --duration-quick: 150ms;
+  --duration-fast: 250ms;
+  --duration-medium: 350ms;
+  --duration-slow: 400ms;
+  --duration-very-slow: 500ms;
+  --ease-smooth-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: ease-in-out;
+  --distance-medium: 12px;
+  --distance-large: 30px;
+  --scale-large: 0.96;
+  --blur-small: 2px;
+  --blur-medium: 3px;
+}

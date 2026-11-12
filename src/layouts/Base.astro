@@ -1,0 +1,64 @@
+---
+import "../styles/global.css";
+import { site, withBase } from "../site.config";
+import { validateMedia } from "../data/media";
+
+interface Props {
+  ogImage: string;
+}
+const { ogImage } = Astro.props;
+validateMedia();
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogUrl = new URL(ogImage, Astro.site).href;
+---
+<!doctype html>
+<html lang="it" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{site.title}</title>
+    <meta name="description" content={site.description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#0f0f0f" />
+    <meta name="color-scheme" content="dark" />
+
+    <link rel="icon" href={withBase("favicon.ico")} sizes="48x48" />
+    <link rel="icon" href={withBase("favicon.svg")} type="image/svg+xml" />
+    <link rel="apple-touch-icon" href={withBase("apple-touch-icon.png")} />
+    <link rel="manifest" href={withBase("site.webmanifest")} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content={site.locale} />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={site.title} />
+    <meta property="og:description" content={site.description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogUrl} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={site.title} />
+    <meta name="twitter:description" content={site.description} />
+    <meta name="twitter:image" content={ogUrl} />
+
+    <script is:inline>
+      (function () {
+        var h = document.documentElement;
+        h.classList.remove("no-js");
+        h.classList.add("js");
+        if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          h.classList.add("motion-ok");
+          // Safety net: if the motion script never runs, show everything.
+          setTimeout(function () {
+            if (!window.__motionReady) h.classList.remove("motion-ok");
+          }, 3000);
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60] btn-primary">Vai al contenuto</a>
+    <slot />
+    <script>
+      import "../scripts/motion.ts";
+    </script>
+  </body>
+</html>

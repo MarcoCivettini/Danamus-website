@@ -1,0 +1,28 @@
+---
+import { Picture } from "astro:assets";
+import { getStill, type MediaId } from "../data/media";
+
+interface Props {
+  id: MediaId;
+  /** Largest CSS width the image is displayed at. */
+  displayWidth: number;
+  sizes: string;
+  eager?: boolean;
+  class?: string;
+}
+const { id, displayWidth, sizes, eager = false, class: className } = Astro.props;
+const m = getStill(id);
+const widths = [Math.round(displayWidth / 2), displayWidth, displayWidth * 2].filter((w) => w <= m.width);
+---
+<Picture
+  src={m.image}
+  alt={m.alt}
+  formats={["avif", "webp"]}
+  fallbackFormat="jpg"
+  widths={widths}
+  sizes={sizes}
+  loading={eager ? "eager" : "lazy"}
+  decoding={eager ? "sync" : "async"}
+  fetchpriority={eager ? "high" : "auto"}
+  class={className}
+/>

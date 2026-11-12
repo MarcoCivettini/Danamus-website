@@ -1,0 +1,11 @@
+---
+import { withBase } from "../site.config";
+const year = new Date().getFullYear();
+---
+<footer class="mt-[var(--section-gap)] pb-12">
+  <div class="container-site flex flex-col gap-6 border-t border-border pt-8 text-caption text-muted sm:flex-row sm:items-center sm:justify-between">
+    <img src={withBase("brand/danamus-horizontal-reversed.svg")} alt="Danamus" width="104" height="26" class="h-[26px] w-auto" />
+    <p>L'analisi avviene sul tuo dispositivo. <a href="#privacy" class="inline-flex min-h-6 items-center text-soft underline-offset-4 hover:text-fg hover:underline">Privacy</a></p>
+    <p class="tabular">© {year} Danamus</p>
+  </div>
+</footer>

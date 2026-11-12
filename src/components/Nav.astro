@@ -1,0 +1,21 @@
+---
+import { withBase } from "../site.config";
+const links = [
+  { href: "#come-funziona", label: "Come funziona" },
+  { href: "#privacy", label: "Privacy" },
+  { href: "#piattaforme", label: "Piattaforme" },
+];
+---
+<header class="glass fixed inset-x-0 top-0 z-50">
+  <nav class="container-site flex h-14 items-center justify-between gap-6" aria-label="Principale">
+    <a href="#top" class="flex items-center" aria-label="Danamus, torna all'inizio">
+      <img src={withBase("brand/danamus-horizontal-reversed.svg")} alt="" width="104" height="26" class="h-[26px] w-auto" />
+    </a>
+    <ul class="hidden items-center gap-8 md:flex" role="list">
+      {links.map((l) => (
+        <li><a href={l.href} class="inline-flex min-h-8 items-center px-1 text-caption text-soft transition-colors duration-150 hover:text-fg">{l.label}</a></li>
+      ))}
+    </ul>
+    <a href="#scarica" class="btn-primary !min-h-8 !px-4 text-caption">Scarica</a>
+  </nav>
+</header>
