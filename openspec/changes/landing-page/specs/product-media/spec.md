@@ -13,11 +13,22 @@ Every screenshot and recording on the site SHALL be captured from the running Da
 - **WHEN** the site shows the editor
 - **THEN** the image is a capture of the Danamus editor with an analyzed project, not a recreated interface
 
+### Requirement: Placeholders stand in for captures not made yet
+Until a capture exists, its manifest entry MAY be marked as a placeholder and point to an image or clip that shows no interface and is visibly labelled "SEGNAPOSTO" with the screen it stands for. Its alternative text SHALL say it is a placeholder. Replacing it with the real capture SHALL only change the manifest entry and its file.
+
+#### Scenario: Capture not made yet
+- **WHEN** the iOS editor capture does not exist yet
+- **THEN** the page shows an image labelled "SEGNAPOSTO" for that screen, and its alternative text says it is a placeholder
+
+#### Scenario: Real capture arrives
+- **WHEN** the real capture is added and its entry is no longer marked as a placeholder
+- **THEN** the page shows the capture without changes to the page code
+
 ### Requirement: Media cover every step and platform shown on the page
 The media set SHALL include, at minimum: desktop captures of video selection, playing-area selection, analysis in progress, editor with timeline and segments, and export; an iOS capture of the editor; and one capture per platform for the platforms section.
 
 #### Scenario: Missing capture
-- **WHEN** a step or platform shown on the page has no capture in the media set
+- **WHEN** a step or platform shown on the page has neither a capture nor a placeholder file in the media set
 - **THEN** the build fails with a message naming the missing media entry
 
 ### Requirement: Media are listed in one manifest

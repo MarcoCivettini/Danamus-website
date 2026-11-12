@@ -51,6 +51,12 @@
 - [ ] 7.3 Visual review screenshots at 360, 390, 768, 1024, 1440 px with motion on and reduced; verify no horizontal scroll and no overlapping content
 - [x] 7.4 Run the pre-push security review (CLAUDE.md) on the branch diff before pushing; verify findings are reported and `.claude/.security-review-ok` matches HEAD
 
+## 8. Temporary publishing with placeholders
+
+- [x] 8.1 Add a `placeholder` flag to the manifest (alt text prefixed as placeholder, footage "none", cleared) and a script that generates labelled "SEGNAPOSTO" stills and clips at the manifest sizes; verify `pnpm build` and `pnpm check:media-rights` pass with only placeholders
+- [ ] 8.2 Open a PR to `main` (title `feat: ...`) after the pre-push security review; verify the PR exists and the branch build passes
+- [ ] 8.3 After the user makes the repo public, enables Pages and merges, verify the site answers at `https://marcocivettini.github.io/Danamus-website/`
+
 ## Workflow follow-up
 
 - User reviews the private preview and verifies the site by hand.

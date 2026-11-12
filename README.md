@@ -61,6 +61,16 @@ ffmpeg -i clip.mov -t 12 -vf "scale=1440:-2,fps=30" -c:v libx264 -crf 26 -preset
   -pix_fmt yuv420p -an -movflags +faststart public/media/editing.mp4
 ```
 
+### Segnaposto
+
+Finché le catture non ci sono, ogni voce del manifest ha `placeholder: true` e punta a un'immagine "SEGNAPOSTO" generata da:
+
+```bash
+pnpm make:placeholders   # crea solo i file mancanti; --force per rigenerarli (serve ffmpeg)
+```
+
+Quando arriva una cattura reale: sovrascrivi il file, togli `placeholder: true`, metti `footage: ITTF` (o la fonte vera) e la data di cattura.
+
 ### Diritti delle riprese
 
 Le catture fatte con la partita ITTF di esempio sono segnate `cleared: false`. Con quelle l'anteprima privata funziona, ma il deploy pubblico si ferma (`pnpm check:media-rights`). Prima di andare online, sostituisci le riprese con una partita tua o autorizzata, oppure imposta `cleared: true` quando hai i diritti.

@@ -8,7 +8,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "check:media-rights": "node scripts/check-media-rights.mjs",
-    "build:preview": "astro build && node scripts/relativize.mjs"
+    "build:preview": "astro build && node scripts/relativize.mjs",
+    "make:placeholders": "node scripts/make-placeholders.mjs"
   },
   "packageManager": "pnpm@12.18.0",
   "dependencies": {

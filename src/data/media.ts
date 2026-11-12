@@ -29,6 +29,8 @@ const Base = z.object({
   height: z.number().int().positive(),
   capturedAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   footage: Footage,
+  /** True while the file is a labelled stand-in (scripts/make-placeholders.mjs). */
+  placeholder: z.boolean().default(false),
 });
 
 const Still = Base.extend({
@@ -56,39 +58,43 @@ const MAC = "Danamus desktop app on macOS (Mac.station)";
 const IOS = "Danamus iOS app in the iOS Simulator (Mac.station)";
 const WIN = "Danamus frontend in Chromium on the Mac, Windows-style title bar (platform `other`)";
 const TBD = "2026-11-12"; // replaced with the real capture date when the files arrive
+// Placeholders show no footage. When a real capture replaces one, set its
+// `footage` to ITTF (or the real source) and drop `placeholder: true`.
+const NONE = { source: "none (placeholder)", cleared: true };
+void ITTF; // used again once the real captures arrive
 
 const raw = [
   { kind: "still", id: "macos-picker", platform: "macos", captureSource: MAC, screen: "video picker",
-    file: "macos/picker.png", width: 2880, height: 1800, capturedAt: TBD, footage: ITTF,
+    file: "macos/picker.png", width: 2880, height: 1800, capturedAt: TBD, footage: NONE, placeholder: true,
     alt: "Danamus su Mac: la schermata per scegliere il video della partita da analizzare." },
   { kind: "still", id: "macos-area", platform: "macos", captureSource: MAC, screen: "playing area",
-    file: "macos/area.png", width: 2880, height: 1800, capturedAt: TBD, footage: ITTF,
+    file: "macos/area.png", width: 2880, height: 1800, capturedAt: TBD, footage: NONE, placeholder: true,
     alt: "Danamus su Mac: l'area di gioco segnata sul tavolo nel fotogramma della partita." },
   { kind: "still", id: "macos-analysis", platform: "macos", captureSource: MAC, screen: "analysis in progress",
-    file: "macos/analysis.png", width: 2880, height: 1800, capturedAt: TBD, footage: ITTF,
+    file: "macos/analysis.png", width: 2880, height: 1800, capturedAt: TBD, footage: NONE, placeholder: true,
     alt: "Danamus su Mac: l'analisi automatica della partita in corso, con la percentuale di avanzamento." },
   { kind: "still", id: "macos-editor", platform: "macos", captureSource: MAC, screen: "editor",
-    file: "macos/editor.png", width: 2880, height: 1800, capturedAt: TBD, footage: ITTF,
+    file: "macos/editor.png", width: 2880, height: 1800, capturedAt: TBD, footage: NONE, placeholder: true,
     alt: "Danamus su Mac: l'editor con l'anteprima del video, la timeline e l'elenco degli scambi trovati." },
   { kind: "still", id: "macos-export", platform: "macos", captureSource: MAC, screen: "export",
-    file: "macos/export.png", width: 2880, height: 1800, capturedAt: TBD, footage: ITTF,
+    file: "macos/export.png", width: 2880, height: 1800, capturedAt: TBD, footage: NONE, placeholder: true,
     alt: "Danamus su Mac: la finestra di esportazione del video montato." },
   { kind: "still", id: "ios-editor", platform: "ios", captureSource: IOS, screen: "editor",
-    file: "ios/editor.png", width: 1206, height: 2622, capturedAt: TBD, footage: ITTF,
+    file: "ios/editor.png", width: 1206, height: 2622, capturedAt: TBD, footage: NONE, placeholder: true,
     alt: "Danamus su iPhone: l'editor con la timeline touch e gli scambi della partita." },
   { kind: "still", id: "ios-projects", platform: "ios", captureSource: IOS, screen: "project list",
-    file: "ios/projects.png", width: 1206, height: 2622, capturedAt: TBD, footage: ITTF,
+    file: "ios/projects.png", width: 1206, height: 2622, capturedAt: TBD, footage: NONE, placeholder: true,
     alt: "Danamus su iPhone: l'elenco dei progetti analizzati." },
   { kind: "still", id: "windows-editor", platform: "windows", captureSource: WIN, screen: "editor",
-    file: "windows/editor.png", width: 2880, height: 1800, capturedAt: TBD, footage: ITTF,
+    file: "windows/editor.png", width: 2880, height: 1800, capturedAt: TBD, footage: NONE, placeholder: true,
     alt: "Danamus su Windows: l'editor con la barra del titolo in stile Windows." },
   { kind: "clip", id: "clip-analysis", platform: "macos", captureSource: MAC, screen: "analysis in progress",
     file: "analysis.mp4", poster: "macos-analysis", durationSeconds: 10, width: 1440, height: 900,
-    capturedAt: TBD, footage: ITTF,
+    capturedAt: TBD, footage: NONE, placeholder: true,
     alt: "Video: Danamus analizza la partita e trova gli scambi uno dopo l'altro." },
   { kind: "clip", id: "clip-editing", platform: "macos", captureSource: MAC, screen: "editor",
     file: "editing.mp4", poster: "macos-editor", durationSeconds: 12, width: 1440, height: 900,
-    capturedAt: TBD, footage: ITTF,
+    capturedAt: TBD, footage: NONE, placeholder: true,
     alt: "Video: nell'editor di Danamus si accorcia uno scambio trascinandone il bordo sulla timeline." },
 ] as const;
 
@@ -137,16 +143,18 @@ export function validateMedia(): void {
   validated = true;
 }
 
+const altFor = (m: MediaEntry) => (m.placeholder ? `Segnaposto, in attesa della cattura reale. ${m.alt}` : m.alt);
+
 export function getStill(id: MediaId): StillEntry & { image: ImageMetadata } {
   validateMedia();
   const m = media.find((e) => e.id === id);
   if (!m || m.kind !== "still") throw new Error(`Media "${id}" is not a still`);
-  return { ...m, image: stills[`../assets/media/${m.file}`]!.default };
+  return { ...m, alt: altFor(m), image: stills[`../assets/media/${m.file}`]!.default };
 }
 
 export function getClip(id: MediaId): ClipEntry & { posterStill: StillEntry & { image: ImageMetadata } } {
   validateMedia();
   const m = media.find((e) => e.id === id);
   if (!m || m.kind !== "clip") throw new Error(`Media "${id}" is not a clip`);
-  return { ...m, posterStill: getStill(m.poster as MediaId) };
+  return { ...m, alt: altFor(m), posterStill: getStill(m.poster as MediaId) };
 }
