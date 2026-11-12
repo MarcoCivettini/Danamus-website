@@ -12,6 +12,6 @@ export default defineConfig({
   output: "static",
   trailingSlash: "ignore",
   // "assets" instead of "_astro": names starting with "_" are reserved by the claude.ai preview host.
-  build: { format: "directory", inlineStylesheets: "auto", assets: "assets" },
+  build: { format: "directory", inlineStylesheets: "always", assets: "assets" },
   vite: { plugins: [tailwindcss()] },
 });

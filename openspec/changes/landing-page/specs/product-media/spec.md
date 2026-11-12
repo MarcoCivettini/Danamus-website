@@ -7,11 +7,15 @@ Defines how screenshots and screen recordings of the Danamus app are produced, s
 ## ADDED Requirements
 
 ### Requirement: Media show the real app
-Every screenshot and recording on the site SHALL be captured from the running Danamus app (desktop build on macOS or Windows, or the iOS app in the iOS Simulator or on an iPhone). The site SHALL NOT show mock-ups or redrawn interfaces presented as the app.
+Every screenshot and recording on the site SHALL be captured from the running Danamus app (desktop build on macOS or Windows, or the iOS app in the iOS Simulator or on an iPhone). Captures MAY be cropped or trimmed, but no pixels SHALL be painted over or redrawn. The site SHALL NOT show mock-ups or redrawn interfaces presented as the app.
 
 #### Scenario: Editor screenshot
 - **WHEN** the site shows the editor
 - **THEN** the image is a capture of the Danamus editor with an analyzed project, not a recreated interface
+
+#### Scenario: Development overlay in a capture
+- **WHEN** a capture shows a development-only overlay at its edge
+- **THEN** the capture is cropped to exclude it, and no pixels are painted over it
 
 ### Requirement: Placeholders stand in for captures not made yet
 Until a capture exists, its manifest entry MAY be marked as a placeholder and point to an image or clip that shows no interface and is visibly labelled "SEGNAPOSTO" with the screen it stands for. Its alternative text SHALL say it is a placeholder. Replacing it with the real capture SHALL only change the manifest entry and its file.
@@ -25,7 +29,7 @@ Until a capture exists, its manifest entry MAY be marked as a placeholder and po
 - **THEN** the page shows the capture without changes to the page code
 
 ### Requirement: Media cover every step and platform shown on the page
-The media set SHALL include, at minimum: desktop captures of video selection, playing-area selection, analysis in progress, editor with timeline and segments, and export; an iOS capture of the editor; and one capture per platform for the platforms section.
+The media set SHALL include, at minimum: captures (iOS or desktop) of video selection, playing-area selection, analysis in progress, editor with timeline and segments, and export; and one capture per platform for the platforms section.
 
 #### Scenario: Missing capture
 - **WHEN** a step or platform shown on the page has neither a capture nor a placeholder file in the media set

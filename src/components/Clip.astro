@@ -7,12 +7,15 @@ interface Props {
   id: MediaId;
   /** CSS width the poster is optimized for. */
   displayWidth: number;
+  /** Above the fold: preload the poster with high priority. */
+  eager?: boolean;
   class?: string;
 }
-const { id, displayWidth, class: className } = Astro.props;
+const { id, displayWidth, eager = false, class: className } = Astro.props;
 const clip = getClip(id);
-const poster = await getImage({ src: clip.posterStill.image, width: Math.min(displayWidth * 2, clip.posterStill.width), format: "webp" });
+const poster = await getImage({ src: clip.posterStill.image, width: Math.min(displayWidth * 2, clip.posterStill.width), format: "webp", quality: 72 });
 ---
+{eager && <link rel="preload" as="image" href={poster.src} fetchpriority="high" />}
 <div class:list={["clip", className]} data-clip>
   <video
     muted

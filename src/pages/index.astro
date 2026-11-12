@@ -11,7 +11,7 @@ import FinalCta from "../components/sections/FinalCta.astro";
 import Footer from "../components/Footer.astro";
 import { getStill } from "../data/media";
 
-const og = await getImage({ src: getStill("macos-editor").image, width: 1200, height: 630, fit: "cover", format: "jpg" });
+const og = await getImage({ src: getStill("ios-fullscreen").image, width: 1200, height: 630, fit: "cover", format: "jpg" });
 ---
 <Base ogImage={og.src}>
   <Nav />

@@ -12,20 +12,11 @@ const symbol = readFileSync("public/brand/danamus-symbol-reversed.svg", "utf8")
   .replace(/<\?xml[^>]*>/, "")
   .match(/<svg[^>]*viewBox="([^"]+)"[^>]*>([\s\S]*)<\/svg>/);
 
+// Only captures that do not exist yet (real ones replaced the others on 12 Nov 2026).
 const stills = [
-  ["macos/picker.png", 2880, 1800, "Scelta del video", "macOS"],
-  ["macos/area.png", 2880, 1800, "Area di gioco", "macOS"],
-  ["macos/analysis.png", 2880, 1800, "Analisi in corso", "macOS"],
-  ["macos/editor.png", 2880, 1800, "Editor", "macOS"],
-  ["macos/export.png", 2880, 1800, "Esportazione", "macOS"],
-  ["ios/editor.png", 1206, 2622, "Editor", "iOS"],
-  ["ios/projects.png", 1206, 2622, "Progetti", "iOS"],
   ["windows/editor.png", 2880, 1800, "Editor", "Windows"],
 ];
-const clips = [
-  ["analysis.mp4", "macos/analysis.png", 10],
-  ["editing.mp4", "macos/editor.png", 12],
-];
+const clips = [];
 
 const svgFor = (w, h, screen, platform) => {
   const u = Math.min(w, h) / 100; // layout unit

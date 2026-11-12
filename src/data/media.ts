@@ -53,57 +53,77 @@ export type MediaEntry = z.infer<typeof Entry>;
 export type StillEntry = z.infer<typeof Still>;
 export type ClipEntry = z.infer<typeof Clip>;
 
-const ITTF = { source: "ITTF broadcast — Kim Kum Yong match (sample)", cleared: false };
-const MAC = "Danamus desktop app on macOS (Mac.station)";
-const IOS = "Danamus iOS app in the iOS Simulator (Mac.station)";
-const WIN = "Danamus frontend in Chromium on the Mac, Windows-style title bar (platform `other`)";
-const TBD = "2026-11-12"; // replaced with the real capture date when the files arrive
-// Placeholders show no footage. When a real capture replaces one, set its
-// `footage` to ITTF (or the real source) and drop `placeholder: true`.
+// Footage cleared for public use by the site owner's decision (12 Nov 2026).
+const ITTF = { source: "ITTF/WTT broadcast, Doha 2025 (Kim Kum Yong match, 2-minute clip)", cleared: true };
+const NOFOOTAGE = { source: "none (no match frame visible)", cleared: true };
 const NONE = { source: "none (placeholder)", cleared: true };
-void ITTF; // used again once the real captures arrive
+const MAC = "Danamus 0.1.0 (5517d29) desktop dev build on macOS, 1x window capture, cropped above the dev indicator";
+const IOS = "Danamus 0.1.0 (5517d29) iOS release build, iPhone 13 simulator, status bar 9:41";
+const WIN = "Danamus frontend in Chromium on the Mac, Windows-style title bar (platform `other`)";
+const SHOT = "2026-11-12";
 
 const raw = [
-  { kind: "still", id: "macos-picker", platform: "macos", captureSource: MAC, screen: "video picker",
-    file: "macos/picker.png", width: 2880, height: 1800, capturedAt: TBD, footage: NONE, placeholder: true,
-    alt: "Danamus su Mac: la schermata per scegliere il video della partita da analizzare." },
-  { kind: "still", id: "macos-area", platform: "macos", captureSource: MAC, screen: "playing area",
-    file: "macos/area.png", width: 2880, height: 1800, capturedAt: TBD, footage: NONE, placeholder: true,
-    alt: "Danamus su Mac: l'area di gioco segnata sul tavolo nel fotogramma della partita." },
-  { kind: "still", id: "macos-analysis", platform: "macos", captureSource: MAC, screen: "analysis in progress",
-    file: "macos/analysis.png", width: 2880, height: 1800, capturedAt: TBD, footage: NONE, placeholder: true,
-    alt: "Danamus su Mac: l'analisi automatica della partita in corso, con la percentuale di avanzamento." },
-  { kind: "still", id: "macos-editor", platform: "macos", captureSource: MAC, screen: "editor",
-    file: "macos/editor.png", width: 2880, height: 1800, capturedAt: TBD, footage: NONE, placeholder: true,
-    alt: "Danamus su Mac: l'editor con l'anteprima del video, la timeline e l'elenco degli scambi trovati." },
-  { kind: "still", id: "macos-export", platform: "macos", captureSource: MAC, screen: "export",
-    file: "macos/export.png", width: 2880, height: 1800, capturedAt: TBD, footage: NONE, placeholder: true,
-    alt: "Danamus su Mac: la finestra di esportazione del video montato." },
+  { kind: "still", id: "ios-picker", platform: "ios", captureSource: IOS, screen: "video picker",
+    file: "ios/picker.png", width: 1170, height: 2532, capturedAt: SHOT, footage: NOFOOTAGE,
+    alt: "Danamus su iPhone: la schermata Scegli il video della partita, mentre il modello si prepara sul dispositivo." },
+  { kind: "still", id: "ios-area", platform: "ios", captureSource: IOS, screen: "playing area",
+    file: "ios/area.png", width: 1170, height: 2532, capturedAt: SHOT, footage: ITTF,
+    alt: "Danamus su iPhone: il rettangolo dell'area di gioco attorno al tavolo, con i pulsanti Cambia video e Analizza." },
+  { kind: "still", id: "ios-analysis", platform: "ios", captureSource: IOS, screen: "analysis in progress",
+    file: "ios/analysis.png", width: 1170, height: 2532, capturedAt: SHOT, footage: NOFOOTAGE,
+    alt: "Danamus su iPhone: analisi in corso all'11%, circa 4 minuti rimanenti." },
   { kind: "still", id: "ios-editor", platform: "ios", captureSource: IOS, screen: "editor",
-    file: "ios/editor.png", width: 1206, height: 2622, capturedAt: TBD, footage: NONE, placeholder: true,
-    alt: "Danamus su iPhone: l'editor con la timeline touch e gli scambi della partita." },
+    file: "ios/editor.png", width: 1170, height: 2532, capturedAt: SHOT, footage: ITTF,
+    alt: "Danamus su iPhone: l'editor con il video della partita, la timeline e il segmento 1 di 11." },
+  { kind: "still", id: "ios-export", platform: "ios", captureSource: IOS, screen: "export completed",
+    file: "ios/export.png", width: 1170, height: 2532, capturedAt: SHOT, footage: ITTF,
+    alt: "Danamus su iPhone: esportazione completata, video salvato nel Rullino." },
   { kind: "still", id: "ios-projects", platform: "ios", captureSource: IOS, screen: "project list",
-    file: "ios/projects.png", width: 1206, height: 2622, capturedAt: TBD, footage: NONE, placeholder: true,
-    alt: "Danamus su iPhone: l'elenco dei progetti analizzati." },
+    file: "ios/projects.png", width: 1170, height: 2532, capturedAt: SHOT, footage: NOFOOTAGE,
+    alt: "Danamus su iPhone: l'elenco dei progetti, con quello nuovo pronto in cima." },
+  { kind: "still", id: "ios-log", platform: "ios", captureSource: IOS, screen: "analysis log",
+    file: "ios/log.png", width: 1170, height: 2532, capturedAt: SHOT, footage: NOFOOTAGE,
+    alt: "Danamus su iPhone: il log di analisi del modello YOLO eseguito sul dispositivo, con 11 scambi trovati." },
+  { kind: "still", id: "ios-fullscreen", platform: "ios", captureSource: IOS, screen: "full-screen preview",
+    file: "ios/fullscreen.png", width: 2532, height: 1170, capturedAt: SHOT, footage: ITTF,
+    alt: "Danamus su iPhone: l'anteprima della partita a schermo intero." },
+  { kind: "still", id: "macos-home", platform: "macos", captureSource: MAC, screen: "home with project list",
+    file: "macos/home.png", width: 1280, height: 730, capturedAt: SHOT, footage: NOFOOTAGE,
+    alt: "Danamus su Mac: la barra laterale con i progetti recenti e la schermata Scegli il video della partita." },
   { kind: "still", id: "windows-editor", platform: "windows", captureSource: WIN, screen: "editor",
-    file: "windows/editor.png", width: 2880, height: 1800, capturedAt: TBD, footage: NONE, placeholder: true,
+    file: "windows/editor.png", width: 2880, height: 1800, capturedAt: SHOT, footage: NONE, placeholder: true,
     alt: "Danamus su Windows: l'editor con la barra del titolo in stile Windows." },
-  { kind: "clip", id: "clip-analysis", platform: "macos", captureSource: MAC, screen: "analysis in progress",
-    file: "analysis.mp4", poster: "macos-analysis", durationSeconds: 10, width: 1440, height: 900,
-    capturedAt: TBD, footage: NONE, placeholder: true,
-    alt: "Video: Danamus analizza la partita e trova gli scambi uno dopo l'altro." },
-  { kind: "clip", id: "clip-editing", platform: "macos", captureSource: MAC, screen: "editor",
-    file: "editing.mp4", poster: "macos-editor", durationSeconds: 12, width: 1440, height: 900,
-    capturedAt: TBD, footage: NONE, placeholder: true,
-    alt: "Video: nell'editor di Danamus si accorcia uno scambio trascinandone il bordo sulla timeline." },
+  { kind: "still", id: "poster-analysis", platform: "ios", captureSource: IOS, screen: "analysis in progress",
+    file: "ios/posters/analysis.png", width: 720, height: 1558, capturedAt: SHOT, footage: NOFOOTAGE,
+    alt: "Danamus su iPhone: l'analisi della partita appena partita." },
+  { kind: "still", id: "poster-editing", platform: "ios", captureSource: IOS, screen: "editor",
+    file: "ios/posters/editing.png", width: 720, height: 1558, capturedAt: SHOT, footage: ITTF,
+    alt: "Danamus su iPhone: l'editor con la timeline dei segmenti." },
+  { kind: "still", id: "poster-preview", platform: "ios", captureSource: IOS, screen: "preview playback",
+    file: "ios/posters/preview.png", width: 720, height: 1558, capturedAt: SHOT, footage: ITTF,
+    alt: "Danamus su iPhone: l'anteprima della partita montata." },
+  { kind: "clip", id: "clip-analysis", platform: "ios", captureSource: IOS, screen: "analysis in progress",
+    file: "analysis.mp4", poster: "poster-analysis", durationSeconds: 13, width: 720, height: 1558,
+    capturedAt: SHOT, footage: NOFOOTAGE,
+    alt: "Video: l'analisi della partita avanza sul telefono, dal 3 al 9 per cento." },
+  { kind: "clip", id: "clip-editing", platform: "ios", captureSource: IOS, screen: "editor",
+    file: "editing.mp4", poster: "poster-editing", durationSeconds: 15, width: 720, height: 1558,
+    capturedAt: SHOT, footage: ITTF,
+    alt: "Video: nell'editor si scorre la timeline, si seleziona un segmento e se ne allunga il bordo." },
+  { kind: "clip", id: "clip-preview", platform: "ios", captureSource: IOS, screen: "preview playback",
+    file: "preview.mp4", poster: "poster-preview", durationSeconds: 15, width: 720, height: 1558,
+    capturedAt: SHOT, footage: ITTF,
+    alt: "Video: l'anteprima riproduce la partita saltando da uno scambio all'altro, senza i tempi morti." },
 ] as const;
 
 export const media: MediaEntry[] = z.array(Entry).parse(raw);
 
 /** Ids the page needs; the build fails if any is missing or has no file. */
 export const requiredMedia = [
-  "macos-picker", "macos-area", "macos-analysis", "macos-editor", "macos-export",
-  "ios-editor", "ios-projects", "windows-editor", "clip-analysis", "clip-editing",
+  "ios-picker", "ios-area", "ios-analysis", "ios-editor", "ios-export", "ios-projects", "ios-log",
+  "ios-fullscreen", "macos-home", "windows-editor",
+  "poster-analysis", "poster-editing", "poster-preview",
+  "clip-analysis", "clip-editing", "clip-preview",
 ] as const;
 export type MediaId = (typeof requiredMedia)[number];
 

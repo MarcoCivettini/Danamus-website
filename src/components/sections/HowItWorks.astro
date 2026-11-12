@@ -5,11 +5,11 @@ import Clip from "../Clip.astro";
 import type { MediaId } from "../../data/media";
 
 const steps: { title: string; text: string; media: MediaId; clip?: boolean }[] = [
-  { title: "Scegli il video", text: "Apri la registrazione della partita, anche di ore. Il file resta dove si trova, sul tuo disco.", media: "macos-picker" },
-  { title: "Segna l'area di gioco", text: "Indichi il tavolo con pochi clic: Danamus guarda solo lì e ignora tutto il resto.", media: "macos-area" },
-  { title: "L'AI trova gli scambi", text: "Il modello segue la pallina fotogramma per fotogramma e capisce quando si gioca e quando no. Lavora sul tuo dispositivo, anche in background.", media: "clip-analysis", clip: true },
+  { title: "Scegli il video", text: "Apri la registrazione della partita dal telefono o dal computer. Il file resta sul tuo dispositivo.", media: "ios-picker" },
+  { title: "Segna l'area di gioco", text: "Trascini gli angoli del rettangolo attorno al tavolo: Danamus guarda solo lì e ignora il resto.", media: "ios-area" },
+  { title: "L'AI trova gli scambi", text: "Il modello segue la pallina fotogramma per fotogramma e capisce quando si gioca e quando no. Intanto puoi aprire altri progetti.", media: "clip-analysis", clip: true },
   { title: "Correggi a mano, se serve", text: "Ogni scambio è un segmento sulla timeline: lo allunghi, lo accorci o lo scarti. Con annulla e ripristina.", media: "clip-editing", clip: true },
-  { title: "Esporta", text: "Ottieni un video con solo il gioco, pronto da rivedere con l'allenatore o da condividere.", media: "macos-export" },
+  { title: "Esporta", text: "Ottieni un video con solo il gioco, salvato nel Rullino o sul disco, pronto da rivedere o da condividere.", media: "ios-export" },
 ];
 ---
 <section id="come-funziona" class="mt-[var(--section-gap)]" aria-labelledby="how-title">
@@ -31,8 +31,8 @@ const steps: { title: string; text: string; media: MediaId; clip?: boolean }[] =
               <p class="text-lead text-soft mt-4 max-w-[34ch]">{s.text}</p>
             </div>
             <div class="walkthrough__inline mt-8" data-reveal style="--reveal-index:1">
-              <DeviceFrame variant="window" width={2880} height={1800}>
-                {s.clip ? <Clip id={s.media} displayWidth={720} /> : <Screenshot id={s.media} displayWidth={720} sizes="92vw" />}
+              <DeviceFrame variant="phone" width={720} height={1558}>
+                {s.clip ? <Clip id={s.media} displayWidth={300} /> : <Screenshot id={s.media} displayWidth={300} sizes="(min-width: 400px) 300px, 78vw" />}
               </DeviceFrame>
             </div>
           </li>
@@ -40,13 +40,15 @@ const steps: { title: string; text: string; media: MediaId; clip?: boolean }[] =
       </ol>
       <div class="walkthrough__stage" aria-hidden="true">
         <div class="walkthrough__sticky">
-          <DeviceFrame variant="window" width={2880} height={1800}>
-            {steps.map((s, i) => (
-              <div class="walkthrough__media" data-media={String(i)}>
-                {s.clip ? <Clip id={s.media} displayWidth={720} /> : <Screenshot id={s.media} displayWidth={720} sizes="(min-width: 1200px) 660px, 55vw" />}
-              </div>
-            ))}
-          </DeviceFrame>
+          <div class="walkthrough__phone">
+            <DeviceFrame variant="phone" width={720} height={1558}>
+              {steps.map((s, i) => (
+                <div class="walkthrough__media" data-media={String(i)}>
+                  {s.clip ? <Clip id={s.media} displayWidth={340} /> : <Screenshot id={s.media} displayWidth={340} sizes="340px" />}
+                </div>
+              ))}
+            </DeviceFrame>
+          </div>
         </div>
       </div>
     </div>
@@ -56,12 +58,13 @@ const steps: { title: string; text: string; media: MediaId; clip?: boolean }[] =
 <style>
   /* Default (no JS or narrow screens): each step shows its own media. */
   .walkthrough__steps { display: grid; gap: clamp(72px, 12vw, 120px); }
+  .walkthrough__inline { width: min(300px, 78vw); }
   .walkthrough__stage { display: none; }
 
   @media (min-width: 1024px) {
     :global(html.js) .walkthrough {
       display: grid;
-      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
       gap: clamp(40px, 5vw, 80px);
     }
     :global(html.js) .walkthrough__steps { gap: 0; }
@@ -74,8 +77,9 @@ const steps: { title: string; text: string; media: MediaId; clip?: boolean }[] =
     :global(html.js) .walkthrough__step[data-current] { opacity: 1; }
     :global(html.js) .walkthrough__inline { display: none; }
     :global(html.js) .walkthrough__stage { display: block; }
-    .walkthrough__sticky { position: sticky; top: 0; height: 100vh; display: flex; align-items: center; }
-    .walkthrough__sticky > :global(.device) { width: 100%; }
+    .walkthrough__sticky { position: sticky; top: 0; height: 100vh; display: flex; align-items: center; justify-content: center; padding-top: 56px; }
+    /* Phone fits the viewport height: screen ratio 720/1558 plus bezel. */
+    .walkthrough__phone { width: min(340px, calc((100vh - 120px) * 0.43)); }
     .walkthrough__media {
       position: absolute; inset: 0;
       opacity: 0; scale: 1.02; filter: blur(var(--blur-medium));
