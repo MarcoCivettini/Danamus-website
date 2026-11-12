@@ -16,12 +16,12 @@
 
 ## 3. Media capture on the Mac (Remote Control)
 
-- [ ] 3.1 Attach this session to the Mac folder "Danamus" via Remote Control (or run these steps in a Claude session on the Mac); verify a command runs on Mac.station and lists the Danamus repo
-- [ ] 3.2 On the Mac, prepare demo state: projects analyzed with the ITTF Kim Kum Yong match renamed to demo names, clean desktop, notifications off; verify a test capture shows no personal names, paths or notifications
+- [x] 3.1 Attach this session to the Mac folder "Danamus" via Remote Control (or run these steps in a Claude session on the Mac); verify a command runs on Mac.station and lists the Danamus repo
+- [x] 3.2 On the Mac, prepare demo state: projects analyzed with the ITTF Kim Kum Yong match renamed to demo names, clean desktop, notifications off; verify a test capture shows no personal names, paths or notifications
 - [ ] 3.3 Capture the macOS desktop app at 1440x900: video picker, playing-area page, analysis in progress, editor with timeline and segments, export dialog (stills + 5–15 s clips of analysis and editing); verify every capture listed in design is in `media-src/macos/`
-- [ ] 3.4 Capture the iOS app in the iOS Simulator (clean status bar 9:41): editor with an analyzed project and one more screen, plus a short clip; verify files are in `media-src/ios/` at native simulator resolution
+- [x] 3.4 Capture the iOS app in the iOS Simulator (clean status bar 9:41): editor with an analyzed project and one more screen, plus a short clip; verify files are in `media-src/ios/` at native simulator resolution
 - [ ] 3.5 Capture the Windows-style UI from the frontend in a Chromium window on the Mac (platform `other`, project analyzed in that browser) for the platforms section; verify the Windows title-bar controls are visible in `media-src/windows/`
-- [ ] 3.6 Transfer the raw captures into the repo `media-src/`, encode clips with ffmpeg (H.264, no audio, faststart, ≤15 s, ≤2 MB) with poster frames; verify sizes and durations with `ffprobe`
+- [x] 3.6 Transfer the raw captures into the repo `media-src/`, encode clips with ffmpeg (H.264, no audio, faststart, ≤15 s, ≤2 MB) with poster frames; verify sizes and durations with `ffprobe`
 
 ## 4. Media manifest
 
@@ -47,8 +47,8 @@
 ## 7. Integration checks
 
 - [x] 7.1 Serve the Pages build under `/Danamus-website/` locally and crawl it; verify no 404 for any asset or link
-- [ ] 7.2 Run Lighthouse (mobile) on the built page; verify performance ≥ 90, LCP < 2.5 s, CLS < 0.1
-- [ ] 7.3 Visual review screenshots at 360, 390, 768, 1024, 1440 px with motion on and reduced; verify no horizontal scroll and no overlapping content
+- [x] 7.2 Run Lighthouse (mobile) on the built page; verify performance ≥ 90, LCP < 2.5 s, CLS < 0.1
+- [x] 7.3 Visual review screenshots at 360, 390, 768, 1024, 1440 px with motion on and reduced; verify no horizontal scroll and no overlapping content
 - [x] 7.4 Run the pre-push security review (CLAUDE.md) on the branch diff before pushing; verify findings are reported and `.claude/.security-review-ok` matches HEAD
 
 ## 8. Temporary publishing with placeholders
@@ -56,6 +56,13 @@
 - [x] 8.1 Add a `placeholder` flag to the manifest (alt text prefixed as placeholder, footage "none", cleared) and a script that generates labelled "SEGNAPOSTO" stills and clips at the manifest sizes; verify `pnpm build` and `pnpm check:media-rights` pass with only placeholders
 - [x] 8.2 Open a PR to `main` (title `feat: ...`) after the pre-push security review; verify the PR exists and the branch build passes
 - [ ] 8.3 After the user makes the repo public, enables Pages and merges, verify the site answers at `https://marcocivettini.github.io/Danamus-website/`
+
+## 9. Real captures (iPhone-first)
+
+- [x] 9.1 Import the iOS stills, the cropped macOS home and trimmed clips with extracted posters into `src/assets/media/` and `public/media/`; verify sizes and durations with a script/ffprobe and that no file shows the dev indicator
+- [x] 9.2 Update the manifest (ids, files, sizes, capture date 2026-11-12, footage source, `cleared: true` by owner decision, placeholder only for Windows); verify the build passes and `check:media-rights` passes
+- [x] 9.3 Switch hero and walkthrough to phone frames, privacy to the analysis log, platforms macOS to the desktop capture; verify in Playwright at 360/390/1024/1440 (no horizontal scroll, walkthrough order 0-4, hero title and CTA above the fold)
+- [x] 9.4 Rerun Lighthouse mobile on the Pages build; verify performance >= 90, LCP < 2.5 s, CLS < 0.1
 
 ## Workflow follow-up
 

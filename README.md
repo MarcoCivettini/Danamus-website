@@ -38,12 +38,14 @@ Ogni media è dichiarato in `src/data/media.ts` con id, file, piattaforma, testo
 
 Per sostituire una cattura basta sovrascrivere il file con lo stesso nome e aggiornare dimensioni e data nel manifest.
 
-Catture previste (dall'app reale, sul Mac):
+Catture attuali (12 nov 2026, Danamus 0.1.0 `5517d29`):
 
-- macOS, finestra 1440×900 punti (file 2880×1800): `macos/picker.png`, `area.png`, `analysis.png`, `editor.png`, `export.png`
-- iOS Simulator (iPhone 16 Pro, 1206×2622): `ios/editor.png`, `ios/projects.png`
-- Windows (frontend in Chromium sul Mac, 2880×1800): `windows/editor.png`
-- Video: `public/media/analysis.mp4`, `editing.mp4`
+- iOS, simulatore iPhone 13 (1170×2532): `ios/picker.png`, `area.png`, `analysis.png`, `editor.png`, `export.png`, `projects.png`, `log.png`, `fullscreen.png` (2532×1170, usata per l'anteprima social)
+- macOS (1280×730, build di sviluppo a 1x, ritagliata sopra l'indicatore del dev server): `macos/home.png`
+- Windows: ancora segnaposto (`windows/editor.png`)
+- Video (720×1558, max 15 s): `public/media/analysis.mp4`, `editing.mp4`, `preview.mp4`, con i poster estratti dal primo fotogramma in `ios/posters/`
+
+Da rifare quando possibile: le schermate desktop con una build di produzione (`pnpm tauri build`) su schermo Retina, e una cattura Windows.
 
 Comandi utili sul Mac:
 
@@ -73,7 +75,7 @@ Quando arriva una cattura reale: sovrascrivi il file, togli `placeholder: true`,
 
 ### Diritti delle riprese
 
-Le catture fatte con la partita ITTF di esempio sono segnate `cleared: false`. Con quelle l'anteprima privata funziona, ma il deploy pubblico si ferma (`pnpm check:media-rights`). Prima di andare online, sostituisci le riprese con una partita tua o autorizzata, oppure imposta `cleared: true` quando hai i diritti.
+Le catture mostrano una trasmissione ITTF/WTT (Doha 2025). Il 12 nov 2026 il proprietario del sito ha deciso di pubblicarle, quindi sono `cleared: true`. Se una ripresa non può andare online, mettila a `cleared: false`: il deploy pubblico si ferma (`pnpm check:media-rights`) finché non la sostituisci.
 
 ## Pubblicazione su GitHub Pages
 
