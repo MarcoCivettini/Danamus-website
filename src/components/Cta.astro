@@ -1,0 +1,29 @@
+---
+import { site, type Platform } from "../site.config";
+
+interface Props {
+  /** Show only these platforms (default: all). */
+  only?: Platform[];
+  size?: "md" | "sm";
+  class?: string;
+}
+const { only, size = "md", class: className } = Astro.props;
+const items = site.platforms.filter((p) => !only || only.includes(p.platform));
+---
+<ul class:list={["flex flex-wrap items-center gap-3", className]} role="list">
+  {items.map((p) => (
+    <li>
+      {p.href ? (
+        <a class:list={["btn-primary", size === "sm" && "!min-h-9 !px-4 text-caption"]} href={p.href}>
+          {p.label}
+        </a>
+      ) : (
+        <span class:list={["btn-soon", size === "sm" && "!min-h-9 !px-4 text-caption"]} aria-label={`${p.name}: ${site.comingSoonLabel}`}>
+          <span class="text-fg font-medium">{p.name}</span>
+          <span aria-hidden="true">·</span>
+          <span>{site.comingSoonLabel}</span>
+        </span>
+      )}
+    </li>
+  ))}
+</ul>

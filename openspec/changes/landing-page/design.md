@@ -40,7 +40,8 @@ The reversed SVGs and the `web/` favicon kit are copied into `public/brand/` and
 Inter via `@fontsource-variable/inter` (SIL OFL), bundled by the build; `font-display: swap`, with the system stack fallback. No Google Fonts request.
 
 ### Motion: CSS scroll-driven animations with a progressive enhancement layer
-- Entry reveals use `animation-timeline: view()` inside `@supports (animation-timeline: view())`; browsers without support get a ~1 KB IntersectionObserver script that adds an `is-visible` class.
+- Entry reveals use an IntersectionObserver that adds `is-visible` once per element (a `view()` timeline would replay the reveal when scrolling back up, while the spec asks for "once"). Continuous scroll-linked effects (the hero device straightening as it scrolls in) use `animation-timeline: view()` inside `@supports`, and are simply absent where unsupported.
+- A safety net removes `motion-ok` if the motion script has not run within 3 s, so a failed script never leaves content hidden.
 - Initial "hidden" states are applied only when `html` has the class `motion-ok`, set by an inline script when `prefers-reduced-motion` is not `reduce`. Without JavaScript or with reduced motion, content is in its final state (spec `site-visual-identity`).
 - The "come funziona" walkthrough is a tall section with a `position: sticky` device frame; each step's text block scrolls past it, and an IntersectionObserver marks the active step, cross-fading the frame's media (opacity + slight scale/blur using the transitions.dev motion tokens from `transitions-polish/_root.css`). On narrow screens the sticky layout collapses to text + media per step.
 - No animation library (GSAP, Framer Motion): the effects needed are achievable in CSS, and the budget favours none.
@@ -53,7 +54,7 @@ Captures run in a session attached to the Mac folder "Danamus" (Remote Control).
 - **macOS desktop**: run the desktop app (`pnpm tauri dev` or the installed build) at a fixed window size (1440x900 logical), use projects already analyzed with the ITTF match, capture windows with `screencapture -l<windowid> -o` (no shadow) and record with `screencapture -v` or QuickTime for short clips.
 - **iOS**: boot an iPhone simulator (e.g. iPhone 16 Pro), run `pnpm tauri ios dev`, capture with `xcrun simctl io booted screenshot` and `xcrun simctl io booted recordVideo`; set the simulator status bar to a clean state with `xcrun simctl status_bar booted override --time 9:41 --batteryLevel 100`.
 - **Windows**: no Windows machine is available. The Windows captures use the same frontend served by `pnpm dev` and opened in a Chromium window on the Mac at the desktop size: the app then renders its real Windows-style title bar (platform `other`). Projects for these captures are analyzed in that browser session (inference is client-side, so the browser build analyzes the same way). If the user later provides a Windows PC, real captures replace them via the manifest.
-- Demo project names (e.g. "Finale — demo") and a clean desktop/notification state before capturing; raw files land in `media-src/` on the Mac and are committed or transferred to the repo.
+- Demo project names (e.g. "Finale — demo") and a clean desktop/notification state before capturing. Final stills (PNG) are committed in `src/assets/media/<platform>/`; raw screen recordings stay in `media-src/` (git-ignored) and only the encoded MP4s are committed in `public/media/`.
 
 ### Media manifest and pipeline
 - `src/data/media.ts` exports the manifest (id, file, platform, screen, Italian alt text, size, capture date, footage source, `cleared` flag), validated with a zod schema at build time: a missing file or a missing required id fails the build (spec `product-media`).
@@ -66,7 +67,7 @@ Captures run in a session attached to the Mac folder "Danamus" (Remote Control).
 
 ### Publishing
 - **GitHub Pages**: `.github/workflows/deploy.yml` on push to `main` and `workflow_dispatch`: checkout → pnpm install → media-rights check → `astro build` → `actions/upload-pages-artifact` → `actions/deploy-pages`. A failed job never reaches the deploy step, so the live site stays.
-- **Private preview**: the built `dist/` is published as a multi-file claude.ai Artifact (index page plus `_astro/` assets and media as supporting files). The preview build uses relative asset URLs so it works at the artifact's path.
+- **Private preview**: `pnpm build:preview` builds and copies `dist/` to `dist-preview/`, rewriting root-relative URLs to relative ones (HTML, CSS, JS), so the build works at any path; that folder is published as a multi-file claude.ai Artifact.
 
 ## Risks / Trade-offs
 

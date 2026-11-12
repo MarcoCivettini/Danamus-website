@@ -1,0 +1,16 @@
+---
+import Cta from "../Cta.astro";
+import { withBase } from "../../site.config";
+---
+<section id="scarica" class="mt-[var(--section-gap)]" aria-labelledby="cta-title">
+  <div class="container-site flex flex-col items-center text-center">
+    <img src={withBase("brand/danamus-symbol-reversed.svg")} alt="" width="88" height="88" class="h-[88px] w-[88px]" data-reveal />
+    <h2 id="cta-title" class="text-section mt-8 max-w-[14ch] text-balance" data-reveal style="--reveal-index:1">
+      Rivedi solo il gioco.
+    </h2>
+    <p class="text-lead text-soft mt-6 max-w-[36ch]" data-reveal style="--reveal-index:2">
+      Danamus per Mac, Windows e iPhone. Nessun abbonamento, nessun upload.
+    </p>
+    <div class="mt-10" data-reveal style="--reveal-index:3"><Cta class="justify-center" /></div>
+  </div>
+</section>

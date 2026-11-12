@@ -1,0 +1,44 @@
+---
+import { getImage } from "astro:assets";
+import { getClip, type MediaId } from "../data/media";
+import { withBase } from "../site.config";
+
+interface Props {
+  id: MediaId;
+  /** CSS width the poster is optimized for. */
+  displayWidth: number;
+  class?: string;
+}
+const { id, displayWidth, class: className } = Astro.props;
+const clip = getClip(id);
+const poster = await getImage({ src: clip.posterStill.image, width: Math.min(displayWidth * 2, clip.posterStill.width), format: "webp" });
+---
+<div class:list={["clip", className]} data-clip>
+  <video
+    muted
+    loop
+    playsinline
+    preload="none"
+    poster={poster.src}
+    width={clip.width}
+    height={clip.height}
+    data-src={withBase(`media/${clip.file}`)}
+    aria-label={clip.alt}
+  ></video>
+  <button type="button" class="clip__play" data-clip-play hidden aria-label="Riproduci il video">
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" fill="currentColor" /></svg>
+  </button>
+</div>
+
+<style>
+  .clip { position: relative; width: 100%; height: 100%; }
+  .clip video { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .clip__play {
+    position: absolute; inset: auto 12px 12px auto;
+    display: grid; place-items: center; width: 44px; height: 44px; border-radius: 999px;
+    color: var(--fg); background: var(--glass-bg); border: 1px solid var(--glass-border);
+    -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+    transition: transform var(--duration-quick) var(--ease-smooth-out);
+  }
+  .clip__play:active { transform: scale(0.94); }
+</style>

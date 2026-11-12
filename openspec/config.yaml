@@ -17,9 +17,14 @@ context: |
     accent #00c573, minimal / functional / subtle-motion design language.
     The app's design system (DESIGN.md in the Danamus repo) is the reference.
 
-  Tech stack: not chosen yet. The first change must decide it and record it
-  here. Constraints: static output (no runtime backend), fast load
-  (good Core Web Vitals), responsive from phone width, Italian as primary language.
+  Tech stack (decided in change landing-page):
+  - Astro, static output to dist/ (no runtime backend, no third-party CDN at runtime)
+  - Tailwind CSS v4 via @tailwindcss/vite; tokens copied from the app in src/styles/tokens.css
+  - Inter self-hosted (@fontsource-variable/inter)
+  - Images optimized at build time (astro:assets + sharp); media manifest in src/data/media.ts
+  - Package manager: pnpm; deploy: GitHub Actions -> GitHub Pages (base path via SITE_BASE)
+  Constraints: fast load (good Core Web Vitals), responsive from phone width,
+  Italian as primary language.
 
   Tooling available in this repo: transitions.dev skills (motion),
   security-audit skill, MCP servers OriginKit / 21st.dev / Agentation (.mcp.json).

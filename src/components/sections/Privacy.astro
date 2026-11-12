@@ -1,0 +1,32 @@
+---
+import DeviceFrame from "../DeviceFrame.astro";
+import Screenshot from "../Screenshot.astro";
+---
+<section id="privacy" class="mt-[var(--section-gap)]" aria-labelledby="privacy-title">
+  <div class="container-site grid items-center gap-16 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
+    <div>
+      <p class="eyebrow" data-reveal>Tutto sul tuo dispositivo</p>
+      <h2 id="privacy-title" class="text-section mt-4 max-w-[14ch] text-balance" data-reveal style="--reveal-index:1">
+        La partita resta tua.
+      </h2>
+      <p class="text-lead text-soft mt-6 max-w-[40ch]" data-reveal style="--reveal-index:2">
+        L'intelligenza artificiale di Danamus gira interamente sul tuo computer o sul tuo iPhone. Nessun video viene caricato su un server: né per analizzarlo, né per esportarlo.
+      </p>
+      <dl class="mt-14 grid gap-10 sm:grid-cols-2" data-reveal style="--reveal-index:3">
+        <div>
+          <dt class="text-caption text-muted">Video caricati online</dt>
+          <dd class="text-section tabular mt-2">0</dd>
+        </div>
+        <div>
+          <dt class="text-caption text-muted">Dove avviene l'analisi</dt>
+          <dd class="text-step mt-3">Sul tuo dispositivo</dd>
+        </div>
+      </dl>
+    </div>
+    <div class="mx-auto w-full max-w-[300px]" data-reveal style="--reveal-index:2">
+      <DeviceFrame variant="phone" width={1206} height={2622}>
+        <Screenshot id="ios-projects" displayWidth={300} sizes="300px" />
+      </DeviceFrame>
+    </div>
+  </div>
+</section>

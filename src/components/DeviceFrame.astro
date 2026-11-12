@@ -1,0 +1,64 @@
+---
+/**
+ * Generic device frames drawn in CSS (no vendor product imagery).
+ * The slot is the screen; its aspect ratio comes from the media size.
+ */
+interface Props {
+  variant: "laptop" | "window" | "phone";
+  width: number;
+  height: number;
+  class?: string;
+}
+const { variant, width, height, class: className = "" } = Astro.props;
+---
+<figure class:list={["device", `device--${variant}`, className]} style={`--ar: ${width} / ${height}`}>
+  <div class="device__body">
+    <div class="device__screen"><slot /></div>
+    {variant === "phone" && <span class="device__island" aria-hidden="true"></span>}
+  </div>
+  {variant === "laptop" && <div class="device__base" aria-hidden="true"></div>}
+</figure>
+
+<style>
+  .device { margin: 0; position: relative; width: 100%; }
+  .device__screen { position: relative; aspect-ratio: var(--ar); overflow: hidden; background: #000; }
+  .device__screen :global(img),
+  .device__screen :global(video) { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+  /* Laptop: thin dark bezel, flat base. */
+  .device--laptop .device__body {
+    padding: 1.6% 1.6% 2.4%;
+    border-radius: clamp(10px, 1.6vw, 20px) clamp(10px, 1.6vw, 20px) 0 0;
+    background: linear-gradient(#232323, #161616);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.08), 0 40px 120px -30px rgb(0 0 0 / 0.9);
+  }
+  .device--laptop .device__screen { border-radius: clamp(4px, 0.6vw, 8px); }
+  .device--laptop .device__base {
+    height: clamp(8px, 1.4vw, 18px);
+    margin-inline: -6%;
+    border-radius: 0 0 40% 40% / 0 0 100% 100%;
+    background: linear-gradient(#3a3a3a, #1f1f1f 60%, #121212);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.12);
+  }
+
+  /* Window: the capture already contains the app's own title bar. */
+  .device--window .device__body {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 0 0 1px rgb(255 255 255 / 0.1), 0 30px 90px -20px rgb(0 0 0 / 0.85);
+  }
+
+  /* Phone: rounded body, dark bezel, island. */
+  .device--phone .device__body {
+    position: relative;
+    padding: 3.2%;
+    border-radius: 15% / 7%;
+    background: #161616;
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.12), inset 0 0 0 4px #0b0b0b, 0 30px 90px -20px rgb(0 0 0 / 0.9);
+  }
+  .device--phone .device__screen { border-radius: 12.5% / 5.8%; }
+  .device__island {
+    position: absolute; top: 4.6%; left: 50%; translate: -50% 0;
+    width: 30%; aspect-ratio: 3.4 / 1; border-radius: 999px; background: #000;
+  }
+</style>

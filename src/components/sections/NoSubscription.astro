@@ -1,0 +1,24 @@
+---
+const points = [
+  { title: "Nessun abbonamento", text: "Niente rinnovi mensili né annuali." },
+  { title: "Nessun costo per analisi", text: "Analizzi tutte le partite che vuoi." },
+  { title: "Nessun costo per export", text: "Esporti i tuoi video senza pagare a parte." },
+];
+---
+<section class="mt-[var(--section-gap)]" aria-labelledby="price-title">
+  <div class="container-site text-center">
+    <p class="eyebrow" data-reveal>Senza costi aggiuntivi</p>
+    <h2 id="price-title" class="text-section mx-auto mt-4 max-w-[16ch] text-balance" data-reveal style="--reveal-index:1">
+      Nessun abbonamento. Mai.
+    </h2>
+    <ul class="mx-auto mt-16 grid max-w-[960px] gap-12 text-left sm:grid-cols-3 sm:gap-10" role="list">
+      {points.map((p, i) => (
+        <li data-reveal style={`--reveal-index:${i + 2}`}>
+          <span class="block h-px w-10 bg-accent" aria-hidden="true"></span>
+          <h3 class="text-lead mt-5 font-semibold">{p.title}</h3>
+          <p class="text-soft mt-2">{p.text}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
