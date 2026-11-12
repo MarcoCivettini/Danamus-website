@@ -1,0 +1,38 @@
+schema: spec-driven
+
+# Project context
+context: |
+  Danamus-website is the marketing / showcase site ("sito vetrina") for Danamus,
+  a video analysis app for racket sports (ping pong) that detects and removes
+  dead time from match videos using client-side YOLO inference. The app itself
+  lives in a separate repository (marcocivettini/danamus) and is NOT developed here.
+
+  Goal: present the product, explain how it works and its benefits, and drive
+  visitors to download / try the app.
+
+  Product facts to respect:
+  - All video analysis runs on the user's device (browser, desktop via Tauri,
+    mobile). No video is uploaded to a server: this privacy point is a selling point.
+  - Brand: the Danamus symbol (a "D" with a solid ball in its counter), green
+    accent #00c573, minimal / functional / subtle-motion design language.
+    The app's design system (DESIGN.md in the Danamus repo) is the reference.
+
+  Tech stack: not chosen yet. The first change must decide it and record it
+  here. Constraints: static output (no runtime backend), fast load
+  (good Core Web Vitals), responsive from phone width, Italian as primary language.
+
+  Tooling available in this repo: transitions.dev skills (motion),
+  security-audit skill, MCP servers OriginKit / 21st.dev / Agentation (.mcp.json).
+
+  Testing:
+  - No test files unless explicitly requested. The user verifies manually.
+
+# Per-operation guidance (optional)
+operations:
+  apply:
+    guidance:
+      - Do not add test files to the source code unless explicitly requested
+      - Before any git push, run the security review described in CLAUDE.md
+  archive:
+    guidance:
+      - Confirm each tasks item actually done before archiving

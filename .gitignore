@@ -1,0 +1,4 @@
+# Claude Code local state
+.claude/.security-review-ok
+.claude/settings.local.json
+node_modules/
