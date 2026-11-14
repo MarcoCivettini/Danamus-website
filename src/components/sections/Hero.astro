@@ -2,17 +2,32 @@
 import DeviceFrame from "../DeviceFrame.astro";
 import Clip from "../Clip.astro";
 import Cta from "../Cta.astro";
+
+// The hero intro runs in CSS, so no JS is on the critical path. The headline is
+// split into words at build time (a static port of React Bits "Split Text");
+// "Niente attese." stays on one line.
+const words = ["Solo", "gli", "scambi.", "Niente", "attese."];
+const nowrapFrom = 3;
 ---
 <section id="top" class="relative pt-28 sm:pt-36" aria-labelledby="hero-title">
   <div class="container-site text-center">
-    <p class="eyebrow" data-reveal>Per il ping pong</p>
-    <h1 id="hero-title" class="text-hero mx-auto mt-4 max-w-[14ch] text-balance" data-reveal style="--reveal-index:1">
-      Solo gli scambi. Niente&nbsp;attese.
+    <p class="eyebrow" data-intro>Per il ping pong</p>
+    <h1 id="hero-title" class="text-hero mx-auto mt-4 max-w-[14ch] text-balance" aria-label="Solo gli scambi. Niente attese.">
+      <span aria-hidden="true">
+        {words.slice(0, nowrapFrom).map((word, i) => (
+          <><span class="intro-mask"><span class="intro-word" style={`--w:${i}`}>{word}</span></span>{" "}</>
+        ))}
+        <span class="whitespace-nowrap">
+          {words.slice(nowrapFrom).map((word, i) => (
+            <>{i > 0 && " "}<span class="intro-mask"><span class="intro-word" style={`--w:${nowrapFrom + i}`}>{word}</span></span></>
+          ))}
+        </span>
+      </span>
     </h1>
-    <p class="text-lead text-soft mx-auto mt-6 max-w-[38ch] text-pretty" data-reveal style="--reveal-index:2">
+    <p class="text-lead text-soft mx-auto mt-6 max-w-[38ch] text-pretty" data-intro style="--intro-index:5">
       Danamus trova da solo ogni scambio nel video della partita e taglia i tempi morti. Poi lo rifinisci tu, nell'editor.
     </p>
-    <div class="mt-9 flex flex-col items-center gap-4" data-reveal style="--reveal-index:3">
+    <div class="mt-9 flex flex-col items-center gap-4" data-intro style="--intro-index:6">
       <Cta class="justify-center" />
       <p class="text-caption text-muted">Per Mac, Windows e iPhone. Senza abbonamento.</p>
     </div>

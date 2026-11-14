@@ -123,42 +123,42 @@
 
 /* ---------- Motion ----------
  * Content is visible by default. `html.motion-ok` (set inline only when the
- * visitor does not ask for reduced motion and JS runs) enables the hidden
- * initial states; reveal.ts adds `.is-visible` once per element.
+ * visitor does not ask for reduced motion and JS runs) hides the elements that
+ * src/scripts/motion.ts then reveals with GSAP. Base.astro removes the class
+ * after 3 s if the script never runs, so nothing stays hidden.
  */
 html.motion-ok [data-reveal] {
   opacity: 0;
-  translate: 0 var(--distance-large);
-  filter: blur(var(--blur-medium));
-  transition:
-    opacity 900ms var(--ease-smooth-out),
-    translate 900ms var(--ease-smooth-out),
-    filter 900ms var(--ease-smooth-out);
-  transition-delay: calc(var(--reveal-index, 0) * 90ms);
+  visibility: hidden;
 }
-html.motion-ok [data-reveal].is-visible {
-  opacity: 1;
-  translate: 0 0;
-  filter: none;
+/* Headlines stay hidden until SplitText has wrapped their words. */
+html.motion-ok [data-split]:not(.is-split) {
+  visibility: hidden;
+}
+/* Hero intro: CSS only, so it never waits for the motion script. */
+.intro-mask { display: inline-block; overflow: clip; padding-bottom: 0.08em; margin-bottom: -0.08em; vertical-align: top; }
+.intro-word { display: inline-block; }
+html.motion-ok [data-intro] {
+  animation: intro-rise 900ms var(--ease-smooth-out) both;
+  animation-delay: calc(120ms + var(--intro-index, 0) * 90ms);
+}
+html.motion-ok .intro-word {
+  animation: intro-word 1000ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(120ms + var(--w, 0) * 60ms);
+}
+@keyframes intro-rise {
+  from { opacity: 0; translate: 0 24px; filter: blur(8px); }
+  to { opacity: 1; translate: 0 0; filter: none; }
+}
+@keyframes intro-word {
+  from { opacity: 0; translate: 0 110%; filter: blur(6px); }
+  to { opacity: 1; translate: 0 0; filter: none; }
 }
 
-/* Scroll-linked effects (continuous, tied to scroll position). */
-@supports (animation-timeline: view()) {
-  html.motion-ok [data-scroll-zoom] {
-    animation: scroll-zoom linear both;
-    animation-timeline: view();
-    animation-range: entry 0% cover 45%;
-  }
-}
-@keyframes scroll-zoom {
-  from {
-    transform: perspective(1600px) rotateX(14deg) scale(0.9);
-    opacity: 0.5;
-  }
-  to {
-    transform: none;
-    opacity: 1;
-  }
+/* SplitText word masks: keep descenders visible while clipping the rise. */
+[data-split] .word-mask {
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
 }
 
 @media (prefers-reduced-motion: reduce) {

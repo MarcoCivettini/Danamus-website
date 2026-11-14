@@ -6,3 +6,4 @@ dist/
 .astro/
 media-src/
 dist-preview/
+review/
