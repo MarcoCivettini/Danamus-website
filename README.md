@@ -42,11 +42,11 @@ Per sostituire una cattura basta sovrascrivere il file con lo stesso nome e aggi
 Catture attuali (12 nov 2026, Danamus 0.1.0 `5517d29`):
 
 - iOS, simulatore iPhone 13 (1170×2532): `ios/picker.png`, `area.png`, `analysis.png`, `editor.png`, `export.png`, `projects.png`, `log.png`, `fullscreen.png` (2532×1170, usata per l'anteprima social)
-- macOS (1280×730, build di sviluppo a 1x, ritagliata sopra l'indicatore del dev server): `macos/home.png`
+- macOS (14 nov 2026, build di produzione, finestra intera 1280×800 a 1x, libreria demo): `macos/editor.png` e la clip `public/media/macos-editor.mp4` (15 s, poster in `macos/posters/editor.png`), mostrata nella sezione Piattaforme
 - Windows: ancora segnaposto (`windows/editor.png`)
 - Video (720×1558, max 15 s, registrati di nuovo il 14 nov 2026 con la barra di stato forzata a 9:41): `public/media/analysis.mp4`, `editing.mp4`, `preview.mp4`, con i poster estratti dal primo fotogramma in `ios/posters/`
 
-Da rifare quando possibile: le schermate desktop con una build di produzione (`pnpm tauri build`) su schermo Retina, una clip dell'editor desktop, e una cattura Windows.
+Da rifare quando possibile: le catture macOS a 2x su uno schermo Retina, e una cattura Windows.
 
 Comandi utili sul Mac. Per non avere notifiche nelle catture: su iOS registra solo lo schermo del simulatore (`simctl`), sul Mac registra solo la finestra dell'app (`screencapture -l` o lo script `record-window.swift`), mai lo schermo intero.
 
@@ -57,9 +57,16 @@ xcrun simctl io booted screenshot editor.png
 xcrun simctl io booted recordVideo --codec h264 clip.mov      # Ctrl+C per fermare
 
 screencapture -o -l<windowid> home.png                         # una sola finestra, senza ombra
-swift scripts/capture/record-window.swift --list               # id delle finestre aperte
-swift scripts/capture/record-window.swift <windowid> 20 editor.mov   # solo quella finestra, a 2x
+swiftc -O scripts/capture/record-window.swift -o /tmp/record-window   # compila una volta
+/tmp/record-window --list                                      # id delle finestre aperte
+/tmp/record-window <windowid> 20 editor.mov                    # solo quella finestra, alla densità dello schermo
 ```
+
+Catture desktop con una libreria demo (così nella barra laterale non compaiono progetti privati):
+
+1. Chiudi Danamus e rinomina `~/Library/Application Support/com.danamus.app` in `com.danamus.app.backup-before-captures`.
+2. Riapri l'app (parte vuota), crea il progetto demo con il video ITTF, analizza, cattura.
+3. Chiudi l'app, sposta altrove la cartella demo e rinomina il backup in `com.danamus.app`.
 
 Se ffmpeg non è installato, va bene anche quello incluso nella build dell'app (`../Danamus/src-tauri/target/release/ffmpeg`).
 

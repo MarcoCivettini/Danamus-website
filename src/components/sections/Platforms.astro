@@ -1,6 +1,7 @@
 ---
 import DeviceFrame from "../DeviceFrame.astro";
 import Screenshot from "../Screenshot.astro";
+import Clip from "../Clip.astro";
 ---
 <section id="piattaforme" class="mt-[var(--section-gap)]" aria-labelledby="platforms-title">
   <div class="container-site text-center">
@@ -27,8 +28,8 @@ import Screenshot from "../Screenshot.astro";
         <p class="text-headline mt-5 font-semibold">iOS</p>
       </li>
       <li class="platforms__item platforms__item--desktop" data-spotlight data-reveal style="--reveal-index:3">
-        <DeviceFrame variant="window" width={1280} height={730}>
-          <Screenshot id="macos-home" displayWidth={560} sizes="(min-width: 1024px) 42vw, 92vw" />
+        <DeviceFrame variant="window" width={1280} height={800}>
+          <Clip id="clip-macos-editor" displayWidth={560} />
         </DeviceFrame>
         <p class="text-headline mt-5 font-semibold">macOS</p>
       </li>
