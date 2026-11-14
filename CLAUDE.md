@@ -13,7 +13,7 @@ Ogni modifica al sito (pagine, componenti, contenuti strutturali, fix, refactor)
 
 Non modificare il codice del sito fuori da una change OpenSpec. Fanno eccezione solo le modifiche banali (typo, configurazione locale) o quando l'utente chiede esplicitamente di saltare il flusso.
 
-Contesto del prodotto, brand e vincoli sono in `openspec/config.yaml`; le specifiche correnti in `openspec/specs/`. Lo stack del sito non è ancora scelto: lo decide la prima change.
+Contesto del prodotto, brand e vincoli sono in `openspec/config.yaml`; le specifiche correnti in `openspec/specs/`. Stack: Astro (statico) + Tailwind CSS v4, pnpm, deploy su GitHub Pages (dettagli in `openspec/config.yaml` e nel README).
 
 ## Controllo di sicurezza prima di ogni push
 

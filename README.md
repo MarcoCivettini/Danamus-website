@@ -31,6 +31,7 @@ SITE_BASE=/Danamus-website/ pnpm build
 | Elenco di screenshot e video | `src/data/media.ts` |
 | Screenshot (PNG originali, ottimizzati in build) | `src/assets/media/<piattaforma>/` |
 | Video (MP4 già codificati) | `public/media/` |
+| Animazioni (GSAP, ScrollTrigger, SplitText, scroll fluido Lenis) | `src/scripts/motion.ts`; stati iniziali in `src/styles/global.css` |
 
 ## Screenshot e video
 
@@ -43,23 +44,29 @@ Catture attuali (12 nov 2026, Danamus 0.1.0 `5517d29`):
 - iOS, simulatore iPhone 13 (1170×2532): `ios/picker.png`, `area.png`, `analysis.png`, `editor.png`, `export.png`, `projects.png`, `log.png`, `fullscreen.png` (2532×1170, usata per l'anteprima social)
 - macOS (1280×730, build di sviluppo a 1x, ritagliata sopra l'indicatore del dev server): `macos/home.png`
 - Windows: ancora segnaposto (`windows/editor.png`)
-- Video (720×1558, max 15 s): `public/media/analysis.mp4`, `editing.mp4`, `preview.mp4`, con i poster estratti dal primo fotogramma in `ios/posters/`
+- Video (720×1558, max 15 s, registrati di nuovo il 14 nov 2026 con la barra di stato forzata a 9:41): `public/media/analysis.mp4`, `editing.mp4`, `preview.mp4`, con i poster estratti dal primo fotogramma in `ios/posters/`
 
-Da rifare quando possibile: le schermate desktop con una build di produzione (`pnpm tauri build`) su schermo Retina, e una cattura Windows.
+Da rifare quando possibile: le schermate desktop con una build di produzione (`pnpm tauri build`) su schermo Retina, una clip dell'editor desktop, e una cattura Windows.
 
-Comandi utili sul Mac:
+Comandi utili sul Mac. Per non avere notifiche nelle catture: su iOS registra solo lo schermo del simulatore (`simctl`), sul Mac registra solo la finestra dell'app (`screencapture -l` o lo script `record-window.swift`), mai lo schermo intero.
 
 ```bash
-screencapture -o -l<windowid> picker.png                       # finestra senza ombra
-xcrun simctl status_bar booted override --time 9:41 --batteryLevel 100 --batteryState charged
+xcrun simctl status_bar booted override --time 9:41 --batteryLevel 100 --batteryState charged \
+  --cellularBars 4 --wifiBars 3 --dataNetwork wifi
 xcrun simctl io booted screenshot editor.png
-xcrun simctl io booted recordVideo clip.mov
+xcrun simctl io booted recordVideo --codec h264 clip.mov      # Ctrl+C per fermare
+
+screencapture -o -l<windowid> home.png                         # una sola finestra, senza ombra
+swift scripts/capture/record-window.swift --list               # id delle finestre aperte
+swift scripts/capture/record-window.swift <windowid> 20 editor.mov   # solo quella finestra, a 2x
 ```
+
+Se ffmpeg non è installato, va bene anche quello incluso nella build dell'app (`../Danamus/src-tauri/target/release/ffmpeg`).
 
 Codifica dei video (H.264, senza audio, max 15 s, ~2 MB):
 
 ```bash
-ffmpeg -i clip.mov -t 12 -vf "scale=1440:-2,fps=30" -c:v libx264 -crf 26 -preset slow \
+ffmpeg -i clip.mov -t 12 -vf "scale=720:1558,fps=30" -c:v libx264 -crf 26 -preset slow \
   -pix_fmt yuv420p -an -movflags +faststart public/media/editing.mp4
 ```
 

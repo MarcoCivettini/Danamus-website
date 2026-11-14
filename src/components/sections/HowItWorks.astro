@@ -16,13 +16,13 @@ const steps: { title: string; text: string; media: MediaId; clip?: boolean }[] =
   <div class="container-site">
     <header>
       <p class="eyebrow" data-reveal>Come funziona</p>
-      <h2 id="how-title" class="text-section mt-4 max-w-[13ch] text-balance" data-reveal style="--reveal-index:1">
+      <h2 id="how-title" class="text-section mt-4 max-w-[13ch] text-balance" data-split>
         Dalla partita intera al solo gioco.
       </h2>
     </header>
 
     <div class="walkthrough mt-16 lg:mt-24" data-walkthrough data-active="0">
-      <ol class="walkthrough__steps" role="list">
+      <ol class="walkthrough__steps" role="list" data-steps>
         {steps.map((s, i) => (
           <li class="walkthrough__step" data-step={String(i)}>
             <div data-reveal>
@@ -40,6 +40,7 @@ const steps: { title: string; text: string; media: MediaId; clip?: boolean }[] =
       </ol>
       <div class="walkthrough__stage" aria-hidden="true">
         <div class="walkthrough__sticky">
+          <div class="walkthrough__track"><span class="walkthrough__progress" data-walkthrough-progress></span></div>
           <div class="walkthrough__phone">
             <DeviceFrame variant="phone" width={720} height={1558}>
               {steps.map((s, i) => (
@@ -80,19 +81,25 @@ const steps: { title: string; text: string; media: MediaId; clip?: boolean }[] =
     .walkthrough__sticky { position: sticky; top: 0; height: 100vh; display: flex; align-items: center; justify-content: center; padding-top: 56px; }
     /* Phone fits the viewport height: screen ratio 720/1558 plus bezel. */
     .walkthrough__phone { width: min(340px, calc((100vh - 120px) * 0.43)); }
-    .walkthrough__media {
-      position: absolute; inset: 0;
-      opacity: 0; scale: 1.02; filter: blur(var(--blur-medium));
-      transition:
-        opacity var(--duration-very-slow) var(--ease-in-out),
-        scale var(--duration-very-slow) var(--ease-smooth-out),
-        filter var(--duration-very-slow) var(--ease-in-out);
+    /* Without motion the active media simply shows; with motion GSAP
+       cross-fades it (inline styles override these rules). */
+    .walkthrough__media { position: absolute; inset: 0; opacity: 0; }
+    .walkthrough__track {
+      position: absolute; left: 0; top: 50%; translate: 0 -50%;
+      width: 2px; height: min(320px, 40vh); border-radius: 2px;
+      background: rgb(255 255 255 / 0.1); overflow: hidden;
     }
+    .walkthrough__progress {
+      display: block; width: 100%; height: 100%;
+      background: var(--color-accent, #00c573);
+      transform-origin: 50% 0; transform: scaleY(0);
+    }
+    :global(html:not(.motion-ok)) .walkthrough__track { display: none; }
     .walkthrough__media :global(img) { width: 100%; height: 100%; object-fit: cover; }
     .walkthrough[data-active="0"] [data-media="0"],
     .walkthrough[data-active="1"] [data-media="1"],
     .walkthrough[data-active="2"] [data-media="2"],
     .walkthrough[data-active="3"] [data-media="3"],
-    .walkthrough[data-active="4"] [data-media="4"] { opacity: 1; scale: 1; filter: none; }
+    .walkthrough[data-active="4"] [data-media="4"] { opacity: 1; }
   }
 </style>

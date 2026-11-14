@@ -59,8 +59,10 @@ const NOFOOTAGE = { source: "none (no match frame visible)", cleared: true };
 const NONE = { source: "none (placeholder)", cleared: true };
 const MAC = "Danamus 0.1.0 (5517d29) desktop dev build on macOS, 1x window capture, cropped above the dev indicator";
 const IOS = "Danamus 0.1.0 (5517d29) iOS release build, iPhone 13 simulator, status bar 9:41";
+const IOS_REC = "Danamus 0.1.0 (5517d29) iOS release build, iPhone 13 simulator, status bar override 9:41/full battery, simctl recordVideo (simulated screen only)";
 const WIN = "Danamus frontend in Chromium on the Mac, Windows-style title bar (platform `other`)";
 const SHOT = "2026-11-12";
+const CLIPS = "2026-11-14";
 
 const raw = [
   { kind: "still", id: "ios-picker", platform: "ios", captureSource: IOS, screen: "video picker",
@@ -93,26 +95,26 @@ const raw = [
   { kind: "still", id: "windows-editor", platform: "windows", captureSource: WIN, screen: "editor",
     file: "windows/editor.png", width: 2880, height: 1800, capturedAt: SHOT, footage: NONE, placeholder: true,
     alt: "Danamus su Windows: l'editor con la barra del titolo in stile Windows." },
-  { kind: "still", id: "poster-analysis", platform: "ios", captureSource: IOS, screen: "analysis in progress",
-    file: "ios/posters/analysis.png", width: 720, height: 1558, capturedAt: SHOT, footage: NOFOOTAGE,
-    alt: "Danamus su iPhone: l'analisi della partita appena partita." },
-  { kind: "still", id: "poster-editing", platform: "ios", captureSource: IOS, screen: "editor",
-    file: "ios/posters/editing.png", width: 720, height: 1558, capturedAt: SHOT, footage: ITTF,
+  { kind: "still", id: "poster-analysis", platform: "ios", captureSource: IOS_REC, screen: "analysis in progress",
+    file: "ios/posters/analysis.png", width: 720, height: 1558, capturedAt: CLIPS, footage: NOFOOTAGE,
+    alt: "Danamus su iPhone: l'analisi della partita appena partita, all'1 per cento." },
+  { kind: "still", id: "poster-editing", platform: "ios", captureSource: IOS_REC, screen: "editor",
+    file: "ios/posters/editing.png", width: 720, height: 1558, capturedAt: CLIPS, footage: ITTF,
     alt: "Danamus su iPhone: l'editor con la timeline dei segmenti." },
-  { kind: "still", id: "poster-preview", platform: "ios", captureSource: IOS, screen: "preview playback",
-    file: "ios/posters/preview.png", width: 720, height: 1558, capturedAt: SHOT, footage: ITTF,
+  { kind: "still", id: "poster-preview", platform: "ios", captureSource: IOS_REC, screen: "preview playback",
+    file: "ios/posters/preview.png", width: 720, height: 1558, capturedAt: CLIPS, footage: ITTF,
     alt: "Danamus su iPhone: l'anteprima della partita montata." },
-  { kind: "clip", id: "clip-analysis", platform: "ios", captureSource: IOS, screen: "analysis in progress",
-    file: "analysis.mp4", poster: "poster-analysis", durationSeconds: 13, width: 720, height: 1558,
-    capturedAt: SHOT, footage: NOFOOTAGE,
-    alt: "Video: l'analisi della partita avanza sul telefono, dal 3 al 9 per cento." },
-  { kind: "clip", id: "clip-editing", platform: "ios", captureSource: IOS, screen: "editor",
-    file: "editing.mp4", poster: "poster-editing", durationSeconds: 15, width: 720, height: 1558,
-    capturedAt: SHOT, footage: ITTF,
-    alt: "Video: nell'editor si scorre la timeline, si seleziona un segmento e se ne allunga il bordo." },
-  { kind: "clip", id: "clip-preview", platform: "ios", captureSource: IOS, screen: "preview playback",
+  { kind: "clip", id: "clip-analysis", platform: "ios", captureSource: IOS_REC, screen: "analysis in progress",
+    file: "analysis.mp4", poster: "poster-analysis", durationSeconds: 12, width: 720, height: 1558,
+    capturedAt: CLIPS, footage: NOFOOTAGE,
+    alt: "Video: l'analisi della partita avanza sul telefono, dall'1 al 9 per cento." },
+  { kind: "clip", id: "clip-editing", platform: "ios", captureSource: IOS_REC, screen: "editor",
+    file: "editing.mp4", poster: "poster-editing", durationSeconds: 10, width: 720, height: 1558,
+    capturedAt: CLIPS, footage: ITTF,
+    alt: "Video: nell'editor si seleziona uno scambio sulla timeline e se ne allunga la fine." },
+  { kind: "clip", id: "clip-preview", platform: "ios", captureSource: IOS_REC, screen: "preview playback",
     file: "preview.mp4", poster: "poster-preview", durationSeconds: 15, width: 720, height: 1558,
-    capturedAt: SHOT, footage: ITTF,
+    capturedAt: CLIPS, footage: ITTF,
     alt: "Video: l'anteprima riproduce la partita saltando da uno scambio all'altro, senza i tempi morti." },
 ] as const;
 

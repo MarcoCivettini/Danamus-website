@@ -55,7 +55,7 @@
 
 - [x] 8.1 Add a `placeholder` flag to the manifest (alt text prefixed as placeholder, footage "none", cleared) and a script that generates labelled "SEGNAPOSTO" stills and clips at the manifest sizes; verify `pnpm build` and `pnpm check:media-rights` pass with only placeholders
 - [x] 8.2 Open a PR to `main` (title `feat: ...`) after the pre-push security review; verify the PR exists and the branch build passes
-- [ ] 8.3 After the user makes the repo public, enables Pages and merges, verify the site answers at `https://marcocivettini.github.io/Danamus-website/`
+- [x] 8.3 After the user makes the repo public, enables Pages and merges, verify the site answers at `https://marcocivettini.github.io/Danamus-website/`
 
 ## 9. Real captures (iPhone-first)
 
@@ -65,6 +65,8 @@
 - [x] 9.4 Rerun Lighthouse mobile on the Pages build; verify performance >= 90, LCP < 2.5 s, CLS < 0.1
 
 ## Workflow follow-up
+
+- Archived on 2026-11-12 with 3.3 (full desktop captures), 3.5 (Windows capture) and 5.6 (motion polish) still open, by the user's decision: they move to a follow-up change.
 
 - User reviews the private preview and verifies the site by hand.
 - User makes the repository public and enables GitHub Pages; footage is cleared or replaced before the first public deploy.
