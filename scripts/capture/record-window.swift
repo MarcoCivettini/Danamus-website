@@ -7,6 +7,7 @@
 //   swift scripts/capture/record-window.swift <window-id> <seconds> <out.mov>
 //
 // Needs the Screen Recording permission for the app that runs the command.
+import AppKit
 import AVFoundation
 import CoreMedia
 import Foundation
@@ -43,6 +44,10 @@ final class Recorder: NSObject, SCStreamOutput {
         if input.isReadyForMoreMediaData { input.append(buffer) }
     }
 }
+
+// A command-line process must open its window-server connection before
+// ScreenCaptureKit can stream (otherwise CoreGraphics asserts).
+_ = NSApplication.shared
 
 let args = CommandLine.arguments
 let content = try await SCShareableContent.excludingDesktopWindows(true, onScreenWindowsOnly: true)
