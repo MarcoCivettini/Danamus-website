@@ -5,53 +5,43 @@ import Clip from "../Clip.astro";
 ---
 <section id="piattaforme" class="mt-[var(--section-gap)]" aria-labelledby="platforms-title">
   <div class="container-site text-center">
-    <p class="eyebrow" data-reveal>Windows · macOS · iOS</p>
-    <h2 id="platforms-title" class="text-section mx-auto mt-4 max-w-[16ch] text-balance" data-split>
-      Su ogni schermo che usi.
+    <p class="eyebrow" data-reveal>iPhone · Mac · Windows</p>
+    <h2 id="platforms-title" class="text-section-sm mx-auto mt-4 max-w-[16ch] text-balance" data-split>
+      Sul telefono o sul computer.
     </h2>
     <p class="text-lead text-soft mx-auto mt-6 max-w-[40ch]" data-reveal style="--reveal-index:2">
-      Analizzi la partita al computer e la rivedi sull'iPhone. Stessa app, stesso modo di lavorare.
+      Puoi fare tutto dal telefono, dalla registrazione all'export. Se preferisci uno schermo grande, Danamus funziona anche su Mac e Windows.
     </p>
   </div>
   <div class="container-site mt-16 sm:mt-24">
-    <ul class="platforms" role="list">
-      <li class="platforms__item platforms__item--desktop" data-spotlight data-reveal style="--reveal-index:1">
-        <DeviceFrame variant="window" width={2880} height={1800}>
-          <Screenshot id="windows-editor" displayWidth={560} sizes="(min-width: 1024px) 42vw, 92vw" />
-        </DeviceFrame>
-        <p class="text-headline mt-5 font-semibold">Windows</p>
-      </li>
-      <li class="platforms__item platforms__item--phone" data-spotlight data-reveal style="--reveal-index:2">
-        <DeviceFrame variant="phone" width={1170} height={2532}>
-          <Screenshot id="ios-editor" displayWidth={260} sizes="260px" />
-        </DeviceFrame>
-        <p class="text-headline mt-5 font-semibold">iOS</p>
-      </li>
-      <li class="platforms__item platforms__item--desktop" data-spotlight data-reveal style="--reveal-index:3">
+    <div class="combo" data-reveal style="--reveal-index:1">
+      <div class="combo__desktop">
         <DeviceFrame variant="window" width={1280} height={800}>
-          <Clip id="clip-macos-editor" displayWidth={560} />
+          <Clip id="clip-macos-editor" displayWidth={960} />
         </DeviceFrame>
-        <p class="text-headline mt-5 font-semibold">macOS</p>
-      </li>
-    </ul>
+      </div>
+      <div class="combo__phone">
+        <div data-parallax>
+          <DeviceFrame variant="phone" width={1170} height={2532}>
+            <Screenshot id="ios-editor" displayWidth={260} sizes="(min-width: 1024px) 260px, 30vw" />
+          </DeviceFrame>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
 <style>
-  .platforms { display: grid; gap: 64px; text-align: center; }
-  .platforms__item--phone { width: min(240px, 64vw); margin-inline: auto; }
-  /* Pointer spotlight (port of React Bits "Spotlight Card"): a soft accent
-     glow behind the device that follows the pointer. motion.ts sets --mx/--my
-     and --spot only on hover-capable pointers with motion allowed. */
-  .platforms__item { position: relative; isolation: isolate; }
-  .platforms__item::before {
-    content: ""; position: absolute; inset: -32px; z-index: -1; border-radius: 32px; pointer-events: none;
-    background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 50%), rgb(0 197 115 / 0.14), transparent 70%);
-    opacity: var(--spot, 0);
-    transition: opacity var(--duration-slow) var(--ease-smooth-out);
+  /* One group: the desktop window with the phone overlapping its bottom-right
+     corner. Bottom padding leaves room for the phone hanging below the window. */
+  .combo { position: relative; max-width: 1040px; margin-inline: auto; padding-bottom: 14%; }
+  .combo__desktop { width: 88%; }
+  .combo__phone {
+    position: absolute; right: 0; bottom: 0;
+    width: 30%;
+    filter: drop-shadow(0 30px 60px rgb(0 0 0 / 0.6));
   }
   @media (min-width: 1024px) {
-    .platforms { grid-template-columns: 1fr minmax(0, 220px) 1fr; align-items: center; gap: clamp(24px, 3vw, 48px); }
-    .platforms__item--phone { width: 100%; }
+    .combo__phone { width: 24%; }
   }
 </style>

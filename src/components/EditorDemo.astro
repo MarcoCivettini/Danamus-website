@@ -1,0 +1,224 @@
+---
+/**
+ * Hero editor demo (spec: hero-editor-demo): a read-only imitation of the
+ * Danamus mobile editor (reference: src/assets/media/ios/editor.png) playing a
+ * real excerpt with the segments of a project curated by hand.
+ *
+ * Sizes are in em on a 390-wide design: the root sets 1em = 1/39 of the screen
+ * width (container query units), so the UI scales with the phone frame and
+ * needs no JS to lay out. Behaviour lives in src/scripts/editor-demo.ts.
+ * App controls that are not part of the demo are inert.
+ */
+import { getImage } from "astro:assets";
+import demo from "../data/demo-project.json";
+import { getClip } from "../data/media";
+import { withBase } from "../site.config";
+
+const clip = getClip("demo-match");
+const poster = await getImage({ src: clip.posterStill.image, width: 640, format: "webp", quality: 72 });
+const length = demo.excerpt.end - demo.excerpt.start;
+const segments = demo.excerptIntervals;
+const PX = 0.8; // em per second on the timeline (8 design units, as in the app)
+const startT = (segments[0].start + segments[0].end) / 2; // poster frame
+const mmss = (t: number) => `${String(Math.floor(t / 60)).padStart(2, "0")}:${String(Math.floor(t % 60)).padStart(2, "0")}`;
+const precise = (t: number) => `${Math.floor(t / 60)}:${(t % 60).toFixed(1).padStart(4, "0")}`;
+const ticks = Array.from({ length: Math.floor(length / 10) + 1 }, (_, i) => i * 10);
+---
+<link rel="preload" as="image" href={poster.src} fetchpriority="high" />
+<div
+  class="ed"
+  data-editor-demo
+  data-length={length}
+  data-segments={JSON.stringify(segments)}
+  data-src={withBase(`media/${clip.file}`)}
+  style={`--t: ${startT}; --len: ${length}; --px: ${PX}em`}
+  role="group"
+  aria-label="Demo dell'editor di Danamus: una partita vera con gli scambi trovati evidenziati in verde. Puoi mettere in pausa e scorrere la timeline."
+>
+  <div class="ed__status" aria-hidden="true">
+    <span>9:41</span>
+    <svg viewBox="0 0 64 16" class="ed__status-icons"><g fill="currentColor"><rect x="0" y="10" width="3" height="5" rx="1"/><rect x="5" y="7" width="3" height="8" rx="1"/><rect x="10" y="4" width="3" height="11" rx="1"/><rect x="15" y="1" width="3" height="14" rx="1"/><path d="M30 4.5a10 10 0 0 1 12 0l-1.6 2a7 7 0 0 0-8.8 0zM32.6 7.8a6 6 0 0 1 6.8 0L36 12z"/><rect x="47" y="2" width="15" height="11" rx="3" fill="var(--accent)"/><rect x="62.5" y="5.5" width="1.5" height="4" rx=".7" fill="var(--accent)"/></g></svg>
+  </div>
+
+  <div class="ed__header" aria-hidden="true">
+    <svg viewBox="0 0 24 24" class="ed__icon"><path d="M3 7h16M3 12h12M3 17h8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    <div class="ed__title">
+      <p class="ed__name">{demo.project}</p>
+      <p class="ed__sub">Oggi · Pronto</p>
+    </div>
+    <svg viewBox="0 0 24 24" class="ed__icon" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+  </div>
+
+  <div class="ed__stage">
+    <div class="ed__video">
+      <img src={poster.src} width="640" height="360" alt={clip.posterStill.alt} fetchpriority="high" decoding="async" data-ed-poster />
+      <video muted loop playsinline preload="none" width="640" height="360" aria-hidden="true" data-ed-video></video>
+      <div class="ed__controls">
+        <button type="button" class="ed__play" aria-label="Riproduci" aria-pressed="false" data-ed-play>
+          <svg viewBox="0 0 24 24" class="ed__play-on" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg>
+          <svg viewBox="0 0 24 24" class="ed__play-off" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" fill="currentColor"/></svg>
+        </button>
+        <span class="ed__clock tabular" aria-hidden="true"><span data-ed-clock>{mmss(startT)}</span> / {mmss(length)}</span>
+        <div class="ed__seek" data-ed-seek aria-hidden="true"><span class="ed__seek-fill" data-ed-seek-fill></span><span class="ed__seek-knob" data-ed-seek-knob></span></div>
+        <div class="ed__extra" inert aria-hidden="true">
+          <svg viewBox="0 0 24 24" class="ed__icon-sm" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M11 5 6 9H3v6h3l5 4zM15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+          <span class="ed__speed">1x</span>
+          <svg viewBox="0 0 24 24" class="ed__icon-sm" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ed__panel">
+    <div class="ed__toolbar" inert aria-hidden="true">
+      <button type="button" tabindex="-1" aria-disabled="true" class="ed__tool"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button>
+      <button type="button" tabindex="-1" aria-disabled="true" class="ed__tool"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg></button>
+      <button type="button" tabindex="-1" aria-disabled="true" class="ed__tool"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 5v14M5 12h14"/></svg></button>
+      <span class="ed__export">
+        <button type="button" tabindex="-1" aria-disabled="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Esporta</button>
+        <button type="button" tabindex="-1" aria-disabled="true" class="ed__export-more"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 9 6 6 6-6"/></svg></button>
+      </span>
+    </div>
+
+    <div class="ed__info" aria-hidden="true">
+      <span class="tabular" data-ed-precise>{precise(startT)}</span>
+      <span data-ed-segment>Segmento 1 di {segments.length}</span>
+    </div>
+
+    <div
+      class="ed__timeline"
+      role="slider"
+      tabindex="0"
+      aria-label="Timeline della partita"
+      aria-valuemin="0"
+      aria-valuemax={Math.round(length)}
+      aria-valuenow={Math.round(startT)}
+      aria-valuetext={`${mmss(startT)} di ${mmss(length)}, segmento 1 di ${segments.length}`}
+      data-ed-timeline
+      data-lenis-prevent-horizontal
+    >
+      <div class="ed__track" data-ed-track>
+        {ticks.map((s) => (
+          <span class="ed__tick" style={`left: calc(${s} * var(--px))`}><span>{mmss(s).replace(/^0/, "")}</span></span>
+        ))}
+        {segments.map((s, i) => (
+          <span
+            class:list={["ed__seg", i === 0 && "is-current"]}
+            style={`left: calc(${s.start} * var(--px)); width: calc(${(s.end - s.start).toFixed(3)} * var(--px))`}
+            data-ed-seg={i}
+          ></span>
+        ))}
+      </div>
+      <span class="ed__playhead" aria-hidden="true"></span>
+    </div>
+
+    <div class="ed__actions" inert aria-hidden="true">
+      <button type="button" tabindex="-1" aria-disabled="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 5v14M20 12H9M13 8l-4 4 4 4"/></svg>Inizia qui</button>
+      <button type="button" tabindex="-1" aria-disabled="true" class="is-dim"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 5v14M4 12h11M11 8l4 4-4 4"/></svg>Finisci qui</button>
+      <button type="button" tabindex="-1" aria-disabled="true" class="ed__square"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 21v-6l-3-3M7 15l5-5V4M14 4h6v6M20 4l-8 8"/></svg></button>
+      <button type="button" tabindex="-1" aria-disabled="true" class="ed__square"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 7h16M10 11v6M14 11v6M5 7l1 13h12l1-13M9 7V4h6v3"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<script>
+  import "../scripts/editor-demo";
+</script>
+
+<style>
+  /* The demo sizes itself from the phone screen's width. */
+  :global(.device__screen:has(> .ed)) { container-type: inline-size; }
+  .ed {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    font-size: calc(100cqw / 39);
+    background: #0d0d0d; color: var(--fg);
+    -webkit-user-select: none; user-select: none;
+    line-height: 1.25;
+  }
+  .ed :global(svg) { display: block; }
+  .ed button { font: inherit; color: inherit; }
+
+  .ed__status { height: 5em; flex: none; display: flex; align-items: center; justify-content: space-between; padding: 0.6em 3em 0 3.8em; font-size: 1em; }
+  .ed__status > span { font-size: 1.65em; font-weight: 600; letter-spacing: -0.01em; }
+  .ed__status-icons { width: 6.4em; height: 1.6em; }
+
+  .ed__header { height: 6.2em; flex: none; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 2em; padding: 0 2.2em; border-bottom: 1px solid rgb(255 255 255 / 0.12); }
+  .ed__icon { width: 2.4em; height: 2.4em; }
+  .ed__name { font-size: 1.7em; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ed__sub { font-size: 1.3em; color: var(--muted); margin-top: 0.15em; }
+
+  .ed__stage { flex: 1; min-height: 0; display: flex; align-items: center; padding: 0 1.6em; }
+  .ed__video { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 0.8em; overflow: hidden; background: #000; }
+  .ed__video img, .ed__video video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .ed__video video { opacity: 0; transition: opacity var(--duration-fast) var(--ease-smooth-out); }
+  .ed__video.is-ready video { opacity: 1; }
+
+  .ed__controls { position: absolute; left: 1.2em; right: 1.4em; bottom: 1em; display: flex; align-items: center; gap: 1em; }
+  .ed__play {
+    flex: none; width: 4.4em; height: 4.4em; border-radius: 999px; display: grid; place-items: center;
+    background: rgb(0 0 0 / 0.78); cursor: pointer;
+  }
+  .ed__play svg { width: 1.9em; height: 1.9em; }
+  .ed__play .ed__play-off { display: none; }
+  .ed__play[aria-pressed="true"] .ed__play-on { display: none; }
+  .ed__play[aria-pressed="true"] .ed__play-off { display: block; }
+  .ed__play:focus-visible { outline-offset: 2px; }
+  .ed__clock { font-size: 1.35em; font-weight: 500; white-space: nowrap; text-shadow: 0 1px 4px rgb(0 0 0 / 0.6); }
+  .ed__seek { position: relative; flex: 1; height: 2.4em; cursor: pointer; touch-action: pan-y; }
+  .ed__seek::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 0.35em; translate: 0 -50%; border-radius: 1em; background: rgb(0 0 0 / 0.55); }
+  .ed__seek-fill { position: absolute; left: 0; top: 50%; height: 0.35em; translate: 0 -50%; border-radius: 1em; background: #fff; width: calc(var(--t) / var(--len, 140) * 100%); }
+  .ed__seek-knob { position: absolute; top: 50%; width: 1.2em; height: 1.2em; border-radius: 999px; background: #fff; translate: -50% -50%; left: calc(var(--t) / var(--len, 140) * 100%); }
+  .ed__extra { display: flex; align-items: center; gap: 1em; }
+  .ed__icon-sm { width: 1.9em; height: 1.9em; }
+  .ed__speed { font-size: 1.3em; font-weight: 600; padding: 0.55em 0.9em; border-radius: 999px; background: rgb(0 0 0 / 0.78); }
+
+  .ed__panel { flex: none; margin: 0 1.6em 3.4em; padding: 0.8em; border-radius: 1.4em; background: #191919; }
+  .ed__toolbar { display: flex; gap: 0.8em; }
+  .ed__tool, .ed__actions button {
+    display: grid; place-items: center; height: 4.2em; border-radius: 0.9em;
+    background: #1e1e1e; box-shadow: inset 0 0 0 1px #2a2a2a; color: var(--soft);
+  }
+  .ed__tool { width: 4.3em; }
+  .ed__tool svg { width: 2em; height: 2em; }
+  .ed__export { margin-left: auto; flex: 0 0 17em; display: flex; height: 4.2em; border-radius: 0.6em; overflow: hidden; background: var(--accent); color: #04140c; }
+  .ed__export button { display: flex; align-items: center; justify-content: center; gap: 0.6em; flex: 1; font-size: 1.6em; font-weight: 600; }
+  .ed__export button svg { width: 1.3em; height: 1.3em; }
+  .ed__export .ed__export-more { flex: 0 0 2.7em; font-size: 1em; border-left: 2px solid #0d0d0d; }
+  .ed__export .ed__export-more svg { width: 2em; height: 2em; }
+
+  .ed__info { display: flex; justify-content: space-between; align-items: baseline; padding: 1.6em 1.2em 0.4em; }
+  .ed__info span:first-child { font-size: 1.45em; }
+  .ed__info span:last-child { font-size: 1.45em; color: var(--muted); }
+
+  .ed__timeline {
+    position: relative; height: 13em; overflow: hidden; margin-left: 5.2em; cursor: grab;
+    touch-action: pan-y; outline-offset: -2px; border-radius: 0.4em;
+    --center: 50%;
+  }
+  .ed__timeline.is-dragging { cursor: grabbing; }
+  .ed__track { position: absolute; top: 0; bottom: 0; left: var(--center); transform: translateX(calc(var(--t) * var(--px) * -1)); will-change: transform; }
+  .ed__tick { position: absolute; top: 0; bottom: 0; border-left: 1px solid rgb(255 255 255 / 0.06); }
+  .ed__tick > span { position: absolute; top: 0.4em; left: 0.7em; font-size: 1.3em; color: var(--muted); white-space: nowrap; }
+  .ed__track::before { content: ""; position: absolute; left: -100em; right: -100em; top: 3.6em; height: 1px; background: rgb(255 255 255 / 0.14); }
+  .ed__seg {
+    position: absolute; top: 5.4em; height: 5.4em; border-radius: 0.6em;
+    background: color-mix(in oklch, var(--accent) 30%, #0d0d0d);
+    box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--accent) 70%, transparent);
+    transition: background-color var(--duration-fast) var(--ease-smooth-out);
+  }
+  .ed__seg.is-current { background: color-mix(in oklch, var(--accent) 55%, #0d0d0d); box-shadow: inset 0 0 0 1.5px var(--accent); }
+  .ed__playhead { position: absolute; top: 2.6em; bottom: 0; left: var(--center); width: 2px; translate: -1px 0; background: var(--accent); pointer-events: none; }
+  .ed__playhead::before { content: ""; position: absolute; top: -0.2em; left: 50%; width: 1.2em; height: 1.4em; translate: -50% 0; background: var(--accent); border-radius: 0.5em 0.5em 0.6em 0.6em / 0.5em 0.5em 1em 1em; }
+
+  .ed__actions { display: grid; grid-template-columns: 1fr 1fr 4.3em 4.3em; gap: 0.8em; margin-top: 0.4em; }
+  .ed__actions button { display: flex; align-items: center; justify-content: center; gap: 0.5em; font-size: 1em; color: var(--fg); }
+  .ed__actions button:not(.ed__square) { font-size: 1.55em; font-weight: 500; height: 2.71em; border-radius: 0.58em; }
+  .ed__actions button:not(.ed__square) svg { width: 1.2em; height: 1.2em; }
+  .ed__actions .ed__square svg { width: 2em; height: 2em; }
+  .ed__actions .is-dim { color: var(--muted); background: #191919; }
+
+  /* Without JS nothing can play: show the still and the segments only. */
+  :global(html.no-js) .ed__play, :global(html.no-js) .ed__seek-knob { visibility: hidden; }
+  :global(html.no-js) .ed__timeline { cursor: default; }
+</style>

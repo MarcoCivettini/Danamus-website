@@ -1,26 +1,26 @@
 ---
-import { getImage } from "astro:assets";
 import Base from "../layouts/Base.astro";
 import Nav from "../components/Nav.astro";
 import Hero from "../components/sections/Hero.astro";
+import Problem from "../components/sections/Problem.astro";
 import HowItWorks from "../components/sections/HowItWorks.astro";
+import Audience from "../components/sections/Audience.astro";
 import Privacy from "../components/sections/Privacy.astro";
-import NoSubscription from "../components/sections/NoSubscription.astro";
 import Platforms from "../components/sections/Platforms.astro";
+import PricingTeaser from "../components/sections/PricingTeaser.astro";
 import FinalCta from "../components/sections/FinalCta.astro";
 import Footer from "../components/Footer.astro";
-import { getStill } from "../data/media";
-
-const og = await getImage({ src: getStill("ios-fullscreen").image, width: 1200, height: 630, fit: "cover", format: "jpg" });
 ---
-<Base ogImage={og.src}>
+<Base>
   <Nav />
   <main id="main">
     <Hero />
+    <Problem />
     <HowItWorks />
+    <Audience />
     <Privacy />
-    <NoSubscription />
     <Platforms />
+    <PricingTeaser />
     <FinalCta />
   </main>
   <Footer />

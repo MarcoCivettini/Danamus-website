@@ -1,0 +1,73 @@
+---
+import Base from "./Base.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import { site } from "../site.config";
+
+interface Props {
+  title: string;
+  description: string;
+  /** Visible page heading. */
+  heading: string;
+}
+const { title, description, heading } = Astro.props;
+---
+<Base title={title} description={description}>
+  <Nav />
+  <main id="main" class="pt-28 sm:pt-36">
+    <article class="container-site">
+      <div class="prose mx-auto max-w-[68ch]">
+        {site.legal.draft && (
+          <p class="draft" role="note">
+            Bozza: questo testo non è ancora definitivo e verrà rivisto prima della pubblicazione.
+          </p>
+        )}
+        <h1 class="text-section text-balance">{heading}</h1>
+        <p class="text-caption text-muted mt-4">Ultimo aggiornamento: {site.legal.updated}</p>
+        <slot />
+      </div>
+    </article>
+  </main>
+  <Footer />
+</Base>
+
+<style>
+  .draft {
+    margin-bottom: 2.5rem;
+    padding: 0.875rem 1rem;
+    border-radius: 12px;
+    background: var(--surface-2);
+    color: var(--fg);
+    font-size: 0.9375rem;
+  }
+  .prose :global(h2) {
+    margin-top: 3rem;
+    font-size: 1.375rem;
+    line-height: 1.3;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .prose :global(h3) {
+    margin-top: 1.75rem;
+    font-weight: 600;
+  }
+  .prose :global(p),
+  .prose :global(ul) {
+    margin-top: 1rem;
+    color: var(--soft);
+    line-height: 1.65;
+  }
+  .prose :global(ul) {
+    padding-left: 1.25rem;
+    list-style: disc;
+  }
+  .prose :global(li + li) { margin-top: 0.5rem; }
+  .prose :global(strong) { color: var(--fg); font-weight: 600; }
+  .prose :global(a) {
+    color: var(--fg);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: var(--muted);
+  }
+  .prose :global(a:hover) { text-decoration-color: var(--fg); }
+</style>

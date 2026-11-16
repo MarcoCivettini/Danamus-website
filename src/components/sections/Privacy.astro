@@ -1,34 +1,98 @@
 ---
-import DeviceFrame from "../DeviceFrame.astro";
-import Screenshot from "../Screenshot.astro";
+import Icon from "../Icon.astro";
+
+const flow = [
+  { label: "Video", icon: "video" },
+  { label: "Analisi", icon: "analysis" },
+  { label: "Video tagliato", icon: "scissors" },
+] as const;
 ---
-<section id="privacy" class="mt-[var(--section-gap)]" aria-labelledby="privacy-title">
-  <div class="container-site grid items-center gap-16 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
+<section id="privacy" class="band mt-[var(--section-gap)]" aria-labelledby="privacy-title">
+  <div class="container-site grid items-center gap-14 lg:grid-cols-[minmax(0,6fr)_minmax(0,6fr)] lg:gap-20">
     <div>
-      <p class="eyebrow" data-reveal>Tutto sul tuo dispositivo</p>
-      <h2 id="privacy-title" class="text-section mt-4 max-w-[14ch] text-balance" data-split>
+      <p class="eyebrow" data-reveal>Sul tuo dispositivo</p>
+      <h2 id="privacy-title" class="text-section-sm mt-4 max-w-[14ch] text-balance" data-split>
         La partita resta tua.
       </h2>
       <p class="text-lead text-soft mt-6 max-w-[40ch]" data-reveal style="--reveal-index:2">
-        L'intelligenza artificiale di Danamus gira interamente sul tuo computer o sul tuo iPhone. Nessun video viene caricato su un server: né per analizzarlo, né per esportarlo.
+        L'analisi avviene sul tuo telefono o sul tuo computer, anche nel piano gratuito. Il video non passa dai nostri server ed esce dal dispositivo solo quando decidi di condividerlo.
       </p>
-      <dl class="mt-14 grid gap-10 sm:grid-cols-2" data-reveal style="--reveal-index:3">
-        <div>
-          <dt class="text-caption text-muted">Video caricati online</dt>
-          <dd class="text-section tabular mt-2">0</dd>
-        </div>
-        <div>
-          <dt class="text-caption text-muted">Dove avviene l'analisi</dt>
-          <dd class="text-step mt-3">Sul tuo dispositivo</dd>
-        </div>
-      </dl>
     </div>
-    <div class="mx-auto w-full max-w-[300px]" data-reveal style="--reveal-index:2">
-      <div data-parallax>
-        <DeviceFrame variant="phone" width={1170} height={2532}>
-          <Screenshot id="ios-log" displayWidth={300} sizes="300px" />
-        </DeviceFrame>
+
+    <figure class="pd" data-reveal style="--reveal-index:3">
+      <figcaption class="sr-only">
+        Schema: il video, l'analisi e il video tagliato restano sul tuo telefono o computer. Niente viene caricato su un server.
+      </figcaption>
+      <div class="pd__device" aria-hidden="true">
+        <p class="pd__label"><Icon name="smartphone" size={16} />Il tuo telefono o computer</p>
+        <ol class="pd__flow" role="list">
+          {flow.map((n) => (
+            <li class="pd__node">
+              <span class="pd__icon"><Icon name={n.icon} /></span>
+              <span class="pd__name">{n.label}</span>
+            </li>
+          ))}
+        </ol>
       </div>
-    </div>
+      <div class="pd__link" aria-hidden="true"><span class="pd__cut">✕</span></div>
+      <div class="pd__server" aria-hidden="true">
+        <Icon name="server" size={20} />
+        <span>Server</span>
+        <span class="pd__none">Nessun upload</span>
+      </div>
+    </figure>
   </div>
 </section>
+
+<style>
+  .pd { margin: 0; display: grid; justify-items: center; }
+  .pd__device {
+    width: 100%;
+    padding: clamp(20px, 3vw, 32px);
+    border-radius: 24px;
+    background: var(--bg);
+    box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--accent) 40%, transparent);
+  }
+  .pd__label {
+    display: flex; align-items: center; gap: 8px;
+    font-size: var(--text-caption); font-weight: 600; color: var(--accent);
+  }
+  .pd__flow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 24px; }
+  .pd__node { display: grid; justify-items: center; gap: 12px; text-align: center; position: relative; }
+  /* Arrow from each node to the next, through the gap. */
+  .pd__node:not(:last-child)::after {
+    content: ""; position: absolute; top: 28px; left: calc(50% + 36px); right: calc(-50% + 18px);
+    height: 1px; background: var(--soft);
+  }
+  .pd__node:not(:last-child)::before {
+    content: ""; position: absolute; top: 25px; right: calc(-50% + 18px);
+    width: 7px; height: 7px; border-top: 1px solid var(--soft); border-right: 1px solid var(--soft);
+    rotate: 45deg;
+  }
+  .pd__icon {
+    display: grid; place-items: center; width: 56px; height: 56px; border-radius: 16px;
+    color: var(--fg); background: var(--surface-2);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.08);
+  }
+  .pd__node:last-child .pd__icon { color: var(--accent); }
+  .pd__name { font-size: var(--text-caption); color: var(--soft); }
+  /* Dashed line to the server, cut in the middle. */
+  .pd__link {
+    position: relative; width: 1px; height: 64px;
+    background: repeating-linear-gradient(to bottom, var(--muted) 0 4px, transparent 4px 8px);
+  }
+  .pd__cut {
+    position: absolute; top: 50%; left: 50%; translate: -50% -50%;
+    display: grid; place-items: center; width: 26px; height: 26px; border-radius: 999px;
+    background: var(--surface); color: var(--fg); font-size: 13px; line-height: 1;
+    box-shadow: inset 0 0 0 1px var(--border);
+  }
+  .pd__server {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 12px 18px; border-radius: 999px;
+    color: var(--muted); font-size: var(--text-caption);
+    box-shadow: inset 0 0 0 1px var(--border);
+  }
+  .pd__server span:first-of-type { text-decoration: line-through; }
+  .pd__none { color: var(--soft); font-weight: 600; }
+</style>

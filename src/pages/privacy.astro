@@ -1,0 +1,91 @@
+---
+import TextPage from "../layouts/TextPage.astro";
+import { site, withBase } from "../site.config";
+
+const { controller, address, email, vat } = site.legal;
+// Sources checked on 15 Nov 2026:
+// - GitHub Pages logs visitor IPs for security: https://docs.github.com/en/pages/getting-started-with-github-pages/about-github-pages#data-collection
+// - GitHub transfers (SCCs, EU-U.S. DPF): https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement
+const githubPrivacy = "https://docs.github.com/it/site-policy/privacy-policies/github-general-privacy-statement";
+const githubPages = "https://docs.github.com/it/pages/getting-started-with-github-pages/about-github-pages#data-collection";
+---
+<TextPage
+  title="Informativa privacy · Danamus"
+  description="Come il sito e l'app Danamus trattano i dati personali: l'analisi dei video avviene sul tuo dispositivo e il sito non usa cookie."
+  heading="Informativa privacy"
+>
+  <p>
+    Questa informativa spiega quali dati personali trattiamo quando visiti questo sito e quando usi l'app Danamus, e quali diritti hai. È resa ai sensi degli articoli 13 e 14 del Regolamento (UE) 2016/679 (GDPR).
+  </p>
+  <p>
+    In breve: il sito non usa cookie né strumenti di analisi, e l'app elabora i tuoi video solo sul tuo dispositivo. Noi non riceviamo i tuoi video né dati su come usi l'app.
+  </p>
+
+  <h2>Titolare del trattamento</h2>
+  <p>
+    {controller}, {address}.{vat && ` ${vat}.`}<br />
+    Per qualsiasi domanda sulla privacy puoi scrivere a <a href={`mailto:${email}`}>{email}</a>.
+  </p>
+
+  <h2>Il sito</h2>
+  <h3>Cookie e strumenti di tracciamento</h3>
+  <p>
+    Il sito non imposta cookie, non salva dati nel tuo browser e non usa strumenti di analisi, pixel o contenuti di terze parti. Caratteri, immagini e video sono serviti dallo stesso dominio del sito. Per questo non ti chiediamo alcun consenso.
+  </p>
+  <h3>Hosting e log del server</h3>
+  <p>
+    Il sito è ospitato su GitHub Pages, un servizio di GitHub, Inc. (Stati Uniti). Quando visiti una pagina, GitHub registra il tuo indirizzo IP e i dati tecnici della richiesta (data e ora, pagina richiesta, browser) <a href={githubPages} rel="noopener">per motivi di sicurezza</a>, come fa per ogni sito ospitato su GitHub Pages.
+  </p>
+  <ul>
+    <li><strong>Finalità:</strong> consegnare le pagine del sito e proteggerlo da abusi e attacchi.</li>
+    <li><strong>Base giuridica:</strong> il legittimo interesse a rendere disponibile il sito in modo sicuro (art. 6, par. 1, lett. f GDPR).</li>
+    <li><strong>Conservazione:</strong> stabilita da GitHub secondo la propria <a href={githubPrivacy} rel="noopener">informativa privacy</a>, che non indica un periodo specifico per questi log. Noi non abbiamo accesso a questi dati.</li>
+    <li><strong>Trasferimento extra UE:</strong> i dati sono trattati negli Stati Uniti. GitHub dichiara di aderire all'EU-U.S. Data Privacy Framework e di usare le clausole contrattuali standard approvate dalla Commissione europea.</li>
+  </ul>
+
+  <h2>L'app Danamus</h2>
+  <h3>Video e analisi</h3>
+  <p>
+    I video che apri in Danamus, le aree di gioco che segni, i risultati dell'analisi e i progetti restano sul tuo dispositivo. L'analisi avviene sul dispositivo e i video non vengono inviati a noi né a terzi. Se esporti un video e lo condividi, per esempio sui social o in chat, quel trattamento avviene con il servizio che scegli tu e secondo le sue condizioni.
+  </p>
+  <h3>Dati di utilizzo</h3>
+  <p>
+    L'app non invia dati di utilizzo, statistiche, segnalazioni di errore o identificativi del dispositivo. Al momento non richiede un account.
+  </p>
+  <h3>Store di distribuzione</h3>
+  <p>
+    Se scarichi Danamus da uno store (per esempio l'App Store di Apple), lo store tratta i dati del download e degli eventuali acquisti come titolare autonomo, secondo la propria informativa.
+  </p>
+  <h3>Funzioni future</h3>
+  <p>
+    Alcune funzioni in arrivo, come il piano Pro con pagamento, il caricamento automatico su YouTube e gli aggiornamenti automatici, richiederanno l'invio di alcuni dati. Prima che siano disponibili aggiorneremo questa informativa indicando quali dati vengono inviati, a chi e perché.
+  </p>
+
+  <h2>Se ci scrivi</h2>
+  <p>
+    Se ci contatti via email, usiamo il tuo indirizzo e il contenuto del messaggio solo per risponderti (art. 6, par. 1, lett. b o f GDPR) e li conserviamo per il tempo necessario a gestire la richiesta.
+  </p>
+
+  <h2>I tuoi diritti</h2>
+  <p>Puoi chiedere in ogni momento, scrivendo a <a href={`mailto:${email}`}>{email}</a>:</p>
+  <ul>
+    <li>l'accesso ai dati che ti riguardano e una loro copia (art. 15);</li>
+    <li>la rettifica dei dati inesatti (art. 16);</li>
+    <li>la cancellazione (art. 17) o la limitazione del trattamento (art. 18);</li>
+    <li>la portabilità dei dati in un formato leggibile da una macchina (art. 20);</li>
+    <li>di opporti al trattamento basato sul legittimo interesse (art. 21).</li>
+  </ul>
+  <p>
+    Rispondiamo entro un mese dalla richiesta. Per i dati trattati da GitHub nei log del sito puoi rivolgerti anche direttamente a GitHub, come indicato nella sua informativa.
+  </p>
+
+  <h2>Reclamo</h2>
+  <p>
+    Se ritieni che il trattamento dei tuoi dati violi il GDPR, puoi presentare un reclamo al Garante per la protezione dei dati personali (<a href="https://www.garanteprivacy.it" rel="noopener">garanteprivacy.it</a>) o all'autorità del Paese in cui vivi o lavori.
+  </p>
+
+  <h2>Modifiche</h2>
+  <p>
+    Aggiorneremo questa informativa quando cambia il modo in cui trattiamo i dati. La data dell'ultimo aggiornamento è in cima alla pagina. Vedi anche i <a href={withBase("/termini/")}>termini di servizio</a>.
+  </p>
+</TextPage>

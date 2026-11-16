@@ -1,105 +1,61 @@
 ---
-import DeviceFrame from "../DeviceFrame.astro";
-import Screenshot from "../Screenshot.astro";
-import Clip from "../Clip.astro";
-import type { MediaId } from "../../data/media";
+import Icon, { type IconName } from "../Icon.astro";
 
-const steps: { title: string; text: string; media: MediaId; clip?: boolean }[] = [
-  { title: "Scegli il video", text: "Apri la registrazione della partita dal telefono o dal computer. Il file resta sul tuo dispositivo.", media: "ios-picker" },
-  { title: "Segna l'area di gioco", text: "Trascini gli angoli del rettangolo attorno al tavolo: Danamus guarda solo lì e ignora il resto.", media: "ios-area" },
-  { title: "L'AI trova gli scambi", text: "Il modello segue la pallina fotogramma per fotogramma e capisce quando si gioca e quando no. Intanto puoi aprire altri progetti.", media: "clip-analysis", clip: true },
-  { title: "Correggi a mano, se serve", text: "Ogni scambio è un segmento sulla timeline: lo allunghi, lo accorci o lo scarti. Con annulla e ripristina.", media: "clip-editing", clip: true },
-  { title: "Esporta", text: "Ottieni un video con solo il gioco, salvato nel Rullino o sul disco, pronto da rivedere o da condividere.", media: "ios-export" },
+const steps: { title: string; text: string; note?: string; icon: IconName }[] = [
+  { title: "Scegli il video", text: "Apri la registrazione dal telefono o dal computer. Il file resta dove si trova.", icon: "video" },
+  { title: "Segna il tavolo", text: "Trascini gli angoli attorno al tavolo, così l'analisi guarda solo lì e ignora il resto della stanza.", icon: "table" },
+  { title: "Danamus trova gli scambi", text: "Il modello segue la pallina fotogramma per fotogramma e separa il gioco dalle pause. Intanto puoi lavorare su altri progetti.", note: "La durata dell'analisi dipende molto dal dispositivo.", icon: "analysis" },
+  { title: "Rifinisci a mano", text: "Ogni scambio è un segmento sulla timeline. Lo allunghi se è stato tagliato presto, lo scarti se è una pausa. L'editor è pensato per le partite di ping pong.", icon: "segments" },
+  { title: "Esporta", text: "Salvi un video con solo gli scambi, nel Rullino o sul disco, pronto da rivedere o da mandare agli amici.", icon: "download" },
 ];
 ---
 <section id="come-funziona" class="mt-[var(--section-gap)]" aria-labelledby="how-title">
   <div class="container-site">
-    <header>
+    <header class="text-center">
       <p class="eyebrow" data-reveal>Come funziona</p>
-      <h2 id="how-title" class="text-section mt-4 max-w-[13ch] text-balance" data-split>
-        Dalla partita intera al solo gioco.
+      <h2 id="how-title" class="text-section-sm mx-auto mt-4 max-w-[18ch] text-balance" data-split>
+        Dal video intero al solo gioco.
       </h2>
+      <p class="text-lead text-soft mx-auto mt-6 max-w-[40ch]" data-reveal style="--reveal-index:2">
+        Danamus fa quasi tutto da solo. Se vuoi un risultato perfetto, ritocchi i dettagli nell'editor.
+      </p>
     </header>
 
-    <div class="walkthrough mt-16 lg:mt-24" data-walkthrough data-active="0">
-      <ol class="walkthrough__steps" role="list" data-steps>
-        {steps.map((s, i) => (
-          <li class="walkthrough__step" data-step={String(i)}>
-            <div data-reveal>
-              <p class="text-caption tabular text-accent font-semibold">0{i + 1}</p>
-              <h3 class="text-step mt-3">{s.title}</h3>
-              <p class="text-lead text-soft mt-4 max-w-[34ch]">{s.text}</p>
-            </div>
-            <div class="walkthrough__inline mt-8" data-reveal style="--reveal-index:1">
-              <DeviceFrame variant="phone" width={720} height={1558}>
-                {s.clip ? <Clip id={s.media} displayWidth={300} /> : <Screenshot id={s.media} displayWidth={300} sizes="(min-width: 400px) 300px, 78vw" />}
-              </DeviceFrame>
-            </div>
-          </li>
-        ))}
-      </ol>
-      <div class="walkthrough__stage" aria-hidden="true">
-        <div class="walkthrough__sticky">
-          <div class="walkthrough__track"><span class="walkthrough__progress" data-walkthrough-progress></span></div>
-          <div class="walkthrough__phone">
-            <DeviceFrame variant="phone" width={720} height={1558}>
-              {steps.map((s, i) => (
-                <div class="walkthrough__media" data-media={String(i)}>
-                  {s.clip ? <Clip id={s.media} displayWidth={340} /> : <Screenshot id={s.media} displayWidth={340} sizes="340px" />}
-                </div>
-              ))}
-            </DeviceFrame>
+    <ol class="steps mt-16 lg:mt-24" role="list">
+      {steps.map((s, i) => (
+        <li class="step" data-reveal style={`--reveal-index:${i + 1}`}>
+          <div class="step__marker">
+            <span class="step__icon"><Icon name={s.icon} /></span>
           </div>
-        </div>
-      </div>
-    </div>
+          <div class="step__body">
+            <p class="text-caption tabular text-accent font-semibold">0{i + 1}</p>
+            <h3 class="text-lead mt-2 font-semibold">{s.title}</h3>
+            <p class="text-soft mt-2">{s.text}</p>
+            {s.note && <p class="text-caption text-muted mt-3">{s.note}</p>}
+          </div>
+        </li>
+      ))}
+    </ol>
   </div>
 </section>
 
 <style>
-  /* Default (no JS or narrow screens): each step shows its own media. */
-  .walkthrough__steps { display: grid; gap: clamp(72px, 12vw, 120px); }
-  .walkthrough__inline { width: min(300px, 78vw); }
-  .walkthrough__stage { display: none; }
-
+  /* Mobile: vertical list, a hairline links the icons on the left. */
+  .steps { display: grid; gap: 40px; position: relative; max-width: 560px; margin-inline: auto; }
+  .steps::before {
+    content: ""; position: absolute; left: 21px; top: 22px; bottom: 22px; width: 1px;
+    background: var(--border);
+  }
+  .step { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 20px; position: relative; }
+  .step__icon {
+    display: grid; place-items: center; width: 44px; height: 44px; border-radius: 999px;
+    color: var(--accent); background: var(--bg);
+    box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--accent) 45%, transparent);
+  }
+  /* Desktop: five columns, the hairline runs across behind the icons. */
   @media (min-width: 1024px) {
-    :global(html.js) .walkthrough {
-      display: grid;
-      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-      gap: clamp(40px, 5vw, 80px);
-    }
-    :global(html.js) .walkthrough__steps { gap: 0; }
-    :global(html.js) .walkthrough__step {
-      min-height: 78vh;
-      display: flex; flex-direction: column; justify-content: center;
-      opacity: 0.35;
-      transition: opacity var(--duration-slow) var(--ease-smooth-out);
-    }
-    :global(html.js) .walkthrough__step[data-current] { opacity: 1; }
-    :global(html.js) .walkthrough__inline { display: none; }
-    :global(html.js) .walkthrough__stage { display: block; }
-    .walkthrough__sticky { position: sticky; top: 0; height: 100vh; display: flex; align-items: center; justify-content: center; padding-top: 56px; }
-    /* Phone fits the viewport height: screen ratio 720/1558 plus bezel. */
-    .walkthrough__phone { width: min(340px, calc((100vh - 120px) * 0.43)); }
-    /* Without motion the active media simply shows; with motion GSAP
-       cross-fades it (inline styles override these rules). */
-    .walkthrough__media { position: absolute; inset: 0; opacity: 0; }
-    .walkthrough__track {
-      position: absolute; left: 0; top: 50%; translate: 0 -50%;
-      width: 2px; height: min(320px, 40vh); border-radius: 2px;
-      background: rgb(255 255 255 / 0.1); overflow: hidden;
-    }
-    .walkthrough__progress {
-      display: block; width: 100%; height: 100%;
-      background: var(--color-accent, #00c573);
-      transform-origin: 50% 0; transform: scaleY(0);
-    }
-    :global(html:not(.motion-ok)) .walkthrough__track { display: none; }
-    .walkthrough__media :global(img) { width: 100%; height: 100%; object-fit: cover; }
-    .walkthrough[data-active="0"] [data-media="0"],
-    .walkthrough[data-active="1"] [data-media="1"],
-    .walkthrough[data-active="2"] [data-media="2"],
-    .walkthrough[data-active="3"] [data-media="3"],
-    .walkthrough[data-active="4"] [data-media="4"] { opacity: 1; }
+    .steps { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 32px; max-width: none; }
+    .steps::before { left: 22px; right: calc((100% - 4 * 32px) / 5 - 22px); top: 22px; bottom: auto; width: auto; height: 1px; }
+    .step { grid-template-columns: none; gap: 24px; align-content: start; }
   }
 </style>

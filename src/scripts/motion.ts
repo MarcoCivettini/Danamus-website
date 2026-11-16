@@ -1,5 +1,6 @@
 /**
- * Motion layer: Lenis smooth scrolling + GSAP (ScrollTrigger, SplitText).
+ * Motion layer: Lenis smooth scrolling + GSAP (ScrollTrigger, SplitText),
+ * pointer glow and the problem timeline sequence.
  *
  * Progressive enhancement: content is visible without this script (see
  * global.css). `html.motion-ok` is set inline only when reduced motion is not
@@ -64,68 +65,6 @@ function setupClips() {
         void video.play().catch(() => {});
       });
     }
-  });
-}
-
-/* ---------- Walkthrough: active step (always), cross-fade (motion only) ---------- */
-function setupWalkthrough() {
-  document.querySelectorAll<HTMLElement>("[data-walkthrough]").forEach((root) => {
-    const steps = [...root.querySelectorAll<HTMLElement>("[data-step]")];
-    const medias = [...root.querySelectorAll<HTMLElement>("[data-media]")];
-    const progress = root.querySelector<HTMLElement>("[data-walkthrough-progress]");
-    let animate = false;
-
-    const setActive = (index: string) => {
-      if (root.dataset.active === index && steps.some((s) => s.hasAttribute("data-current"))) return;
-      root.dataset.active = index;
-      steps.forEach((s) => s.toggleAttribute("data-current", s.dataset.step === index));
-      if (!animate) return;
-      medias.forEach((m) => {
-        const on = m.dataset.media === index;
-        gsap.to(m, {
-          autoAlpha: on ? 1 : 0,
-          scale: on ? 1 : 1.03,
-          filter: on ? "blur(0px)" : "blur(8px)",
-          duration: on ? 0.6 : 0.45,
-          ease: on ? EASE : "power2.inOut",
-          overwrite: true,
-        });
-      });
-    };
-
-    steps.forEach((s) =>
-      ScrollTrigger.create({
-        trigger: s,
-        start: "top center",
-        end: "bottom center",
-        onToggle: (self) => self.isActive && setActive(s.dataset.step!),
-      }),
-    );
-    setActive("0");
-
-    gsap.matchMedia().add(`${MOTION} and (min-width: 1024px)`, () => {
-      animate = true;
-      const current = root.dataset.active;
-      medias.forEach((m) => {
-        const on = m.dataset.media === current;
-        gsap.set(m, { autoAlpha: on ? 1 : 0, scale: on ? 1 : 1.03, filter: on ? "blur(0px)" : "blur(8px)" });
-      });
-      if (progress) {
-        gsap.fromTo(
-          progress,
-          { scaleY: 0 },
-          {
-            scaleY: 1,
-            ease: "none",
-            scrollTrigger: { trigger: root.querySelector("[data-steps]") ?? root, start: "top center", end: "bottom center", scrub: 0.6 },
-          },
-        );
-      }
-      return () => {
-        animate = false;
-        gsap.set(medias, { clearProps: "opacity,visibility,scale,filter" });
-      };
-    });
   });
 }
 
@@ -217,7 +156,8 @@ function setupScrollEffects() {
   gsap.utils.toArray<HTMLElement>("[data-scroll-zoom]").forEach((el) => {
     gsap.fromTo(
       el,
-      { rotateX: 14, scale: 0.9, opacity: 0.55, transformPerspective: 1600, transformOrigin: "50% 0%" },
+      // Mild start: the hero holds the interactive editor demo, usable at once.
+      { rotateX: 8, scale: 0.94, opacity: 1, transformPerspective: 1600, transformOrigin: "50% 0%" },
       {
         rotateX: 0,
         scale: 1,
@@ -237,35 +177,109 @@ function setupScrollEffects() {
   });
 }
 
-function setupSpotlight() {
-  // Port of React Bits "Spotlight Card", hover-capable pointers only.
-  const cleanups: (() => void)[] = [];
-  gsap.utils.toArray<HTMLElement>("[data-spotlight]").forEach((el) => {
-    const setX = gsap.quickSetter(el, "--mx", "px");
-    const setY = gsap.quickSetter(el, "--my", "px");
-    const move = (e: PointerEvent) => {
-      const r = el.getBoundingClientRect();
-      setX(e.clientX - r.left + 32);
-      setY(e.clientY - r.top + 32);
+function setupTimeline() {
+  // Problem timeline: a one-off sequence when it enters the view (no pin, no
+  // scrub). 1) a playhead sweeps the recording and each rally lights up as it
+  // passes; 2) the pauses fade; 3) they close up, the full length stays as a
+  // dashed outline; 4) the counter drops to the play time. "Rivedi" replays it.
+  gsap.utils.toArray<HTMLElement>("[data-timeline]").forEach((root) => {
+    const track = root.querySelector<HTMLElement>("[data-timeline-track]")!;
+    const value = root.querySelector<HTMLElement>("[data-timeline-value]")!;
+    const name = root.querySelector<HTMLElement>("[data-timeline-name]")!;
+    const ghost = root.querySelector<HTMLElement>("[data-timeline-ghost]")!;
+    const removed = root.querySelector<HTMLElement>("[data-timeline-removed]")!;
+    const head = root.querySelector<HTMLElement>("[data-timeline-head]")!;
+    const replay = root.querySelector<HTMLButtonElement>("[data-timeline-replay]")!;
+    const segs = [...track.children] as HTMLElement[];
+    const grows = segs.map((el) => Number(el.style.flexGrow) || 0); // original durations
+    const pauses = segs.filter((el) => el.classList.contains("timeline__seg--pause"));
+    const total = Number(root.dataset.total);
+    const play = Number(root.dataset.play);
+    const share = getComputedStyle(root).getPropertyValue("--play-share").trim();
+    const mss = (sec: number) => {
+      const r = Math.round(sec + 1e-6);
+      return `${Math.floor(r / 60)}:${String(r % 60).padStart(2, "0")}`;
     };
-    const enter = () => el.style.setProperty("--spot", "1");
-    const leave = () => el.style.setProperty("--spot", "0");
-    el.addEventListener("pointermove", move);
-    el.addEventListener("pointerenter", enter);
-    el.addEventListener("pointerleave", leave);
-    cleanups.push(() => {
-      el.removeEventListener("pointermove", move);
-      el.removeEventListener("pointerenter", enter);
-      el.removeEventListener("pointerleave", leave);
-      el.style.removeProperty("--spot");
+    const clock = { v: total };
+    const SWEEP = 1.4;
+
+    const tl = gsap.timeline({
+      paused: true,
+      onStart: () => (replay.hidden = true),
+      onComplete: () => (replay.hidden = false),
     });
+    tl.set(track, { width: "100%" })
+      .set(pauses, { flexGrow: (i: number) => grows[segs.indexOf(pauses[i])], opacity: 1 })
+      .set([ghost, removed], { opacity: 0 })
+      .set(head, { left: "0%", opacity: 1 })
+      .call(() => {
+        clock.v = total;
+        value.textContent = mss(total);
+        name.textContent = "La registrazione";
+      });
+    // 1. Sweep: the playhead runs the bar, rallies flash as it reaches them.
+    tl.to(head, { left: "100%", duration: SWEEP, ease: "none" }, 0);
+    let offset = 0;
+    segs.forEach((el, i) => {
+      const grow = grows[i];
+      if (el.classList.contains("timeline__seg--rally")) {
+        tl.fromTo(el, { filter: "brightness(1)" }, { filter: "brightness(1.7)", duration: 0.12, yoyo: true, repeat: 1 }, (offset / total) * SWEEP);
+      }
+      offset += grow;
+    });
+    // 2. Pauses fade, the playhead leaves.
+    tl.to(head, { opacity: 0, duration: 0.2 }, SWEEP)
+      .to(pauses, { opacity: 0.25, duration: 0.4, ease: "power1.out" }, SWEEP)
+      .to(ghost, { opacity: 1, duration: 0.4 }, SWEEP + 0.3);
+    // 3. Close up: pauses collapse, rallies slide left, outline stays.
+    tl.to(pauses, { flexGrow: 0, opacity: 0, duration: 1.2, ease: "power2.inOut" }, SWEEP + 0.4)
+      .to(track, { width: share, duration: 1.2, ease: "power2.inOut" }, SWEEP + 0.4);
+    // 4. Counter and removed time.
+    tl.to(clock, {
+      v: play, duration: 1, ease: "power1.out",
+      onUpdate: () => (value.textContent = mss(clock.v)),
+      onComplete: () => (value.textContent = mss(play)),
+    }, SWEEP + 0.9)
+      .call(() => (name.textContent = "Solo il gioco"), [], SWEEP + 1.4)
+      .to(removed, { opacity: 1, duration: 0.4 }, SWEEP + 1.4);
+
+    ScrollTrigger.create({ trigger: root, start: "top 70%", once: true, onEnter: () => tl.play(0) });
+    replay.addEventListener("click", () => tl.restart());
   });
-  return () => cleanups.forEach((c) => c());
+}
+
+function setupGlow() {
+  // Site-wide pointer glow on the page background (spec: site-visual-identity).
+  const glow = document.querySelector<HTMLElement>(".cursor-glow");
+  if (!glow) return;
+  const toX = gsap.quickTo(glow, "x", { duration: 0.6, ease: "power3.out" });
+  const toY = gsap.quickTo(glow, "y", { duration: 0.6, ease: "power3.out" });
+  let shown = false;
+  const move = (e: PointerEvent) => {
+    if (e.pointerType !== "mouse") return;
+    if (!shown) {
+      gsap.set(glow, { x: e.clientX, y: e.clientY });
+      gsap.to(glow, { opacity: 1, duration: 0.4 });
+      shown = true;
+    }
+    toX(e.clientX);
+    toY(e.clientY);
+  };
+  const leave = () => {
+    shown = false;
+    gsap.to(glow, { opacity: 0, duration: 0.4 });
+  };
+  window.addEventListener("pointermove", move, { passive: true });
+  document.documentElement.addEventListener("pointerleave", leave);
+  return () => {
+    window.removeEventListener("pointermove", move);
+    document.documentElement.removeEventListener("pointerleave", leave);
+    gsap.set(glow, { opacity: 0 });
+  };
 }
 
 /* ---------- Boot ---------- */
 setupClips();
-setupWalkthrough();
 
 const mm = gsap.matchMedia();
 mm.add(MOTION, () => {
@@ -273,12 +287,13 @@ mm.add(MOTION, () => {
   const stopLenis = setupLenis();
   setupReveals();
   setupScrollEffects();
+  setupTimeline();
   void document.fonts.ready.then(() => {
     setupHeadlines();
     ScrollTrigger.refresh();
   });
   return stopLenis;
 });
-mm.add(`${MOTION} and (hover: hover) and (pointer: fine)`, () => (motionOk() ? setupSpotlight() : undefined));
+mm.add(`${MOTION} and (hover: hover) and (pointer: fine)`, () => (motionOk() ? setupGlow() : undefined));
 
 (window as unknown as { __motionReady: boolean }).__motionReady = true;
