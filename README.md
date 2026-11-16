@@ -12,7 +12,7 @@ pnpm astro dev stop      # lo ferma
 pnpm build               # sito statico in dist/
 pnpm build:preview       # dist-preview/ con URL relativi (anteprima privata)
 pnpm check:media-rights  # fallisce se ci sono riprese non autorizzate
-pnpm check:legal         # fallisce se privacy e termini sono ancora bozze
+pnpm check:legal         # avvisa se privacy e termini sono bozze; fallisce se draft è false ma mancano dati
 ```
 
 Per provare la build come su GitHub Pages:
@@ -39,7 +39,7 @@ SITE_BASE=/Danamus-website/ pnpm build
 
 ## Privacy e termini
 
-Le pagine `/privacy` e `/termini` sono bozze da far rivedere a un legale. Nome, indirizzo, email, partita IVA del titolare e data di aggiornamento stanno in `legal` dentro `src/site.config.ts`: finché restano tra parentesi quadre, o `draft` è `true`, le pagine mostrano l'avviso di bozza e **il deploy su GitHub Pages si ferma** (`pnpm check:legal` nel workflow). Le anteprime private funzionano comunque. Se la partita IVA non c'è, lascia `vat: ""`.
+Le pagine `/privacy` e `/termini` sono bozze da far rivedere a un legale. Nome, indirizzo, email, partita IVA del titolare e data di aggiornamento stanno in `legal` dentro `src/site.config.ts`: finché `draft` è `true` le pagine vengono **pubblicate come bozze**, con l'avviso "Bozza" e i segnaposto tra parentesi quadre, e `pnpm check:legal` mostra nel riepilogo della run di GitHub un avviso per ogni dato mancante. Attenzione: in questo stato l'informativa pubblica non dice chi è il titolare, quindi va completata presto. Quando metti `draft: false` il controllo diventa rigido e **il deploy si ferma** se manca anche un solo dato. Le anteprime private funzionano comunque. Se la partita IVA non c'è, lascia `vat: ""`.
 
 Il sito non usa cookie, analytics né risorse di terze parti, quindi non serve un banner di consenso. Se in futuro se ne aggiunge una, va aggiornata l'informativa (e, se serve, aggiunto il consenso) nella stessa change.
 
