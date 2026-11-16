@@ -1,18 +1,19 @@
 ---
 import DeviceFrame from "../DeviceFrame.astro";
-import Clip from "../Clip.astro";
+import EditorDemo from "../EditorDemo.astro";
 import Cta from "../Cta.astro";
 
 // The hero intro runs in CSS, so no JS is on the critical path. The headline is
 // split into words at build time (a static port of React Bits "Split Text");
-// "Niente attese." stays on one line.
-const words = ["Solo", "gli", "scambi.", "Niente", "attese."];
-const nowrapFrom = 3;
+// "il gioco." stays on one line.
+const headline = "Rivedi solo il gioco.";
+const words = headline.split(" ");
+const nowrapFrom = 2;
 ---
 <section id="top" class="relative pt-28 sm:pt-36" aria-labelledby="hero-title">
   <div class="container-site text-center">
     <p class="eyebrow" data-intro>Per il ping pong</p>
-    <h1 id="hero-title" class="text-hero mx-auto mt-4 max-w-[14ch] text-balance" aria-label="Solo gli scambi. Niente attese.">
+    <h1 id="hero-title" class="text-hero mx-auto mt-4 max-w-[14ch] text-balance" aria-label={headline}>
       <span aria-hidden="true">
         {words.slice(0, nowrapFrom).map((word, i) => (
           <><span class="intro-mask"><span class="intro-word" style={`--w:${i}`}>{word}</span></span>{" "}</>
@@ -25,17 +26,17 @@ const nowrapFrom = 3;
       </span>
     </h1>
     <p class="text-lead text-soft mx-auto mt-6 max-w-[38ch] text-pretty" data-intro style="--intro-index:5">
-      Danamus trova da solo ogni scambio nel video della partita e taglia i tempi morti. Poi lo rifinisci tu, nell'editor.
+      Metti il telefono sul cavalletto e registra la partita. Danamus trova gli scambi e taglia le pause, così rivedi solo i punti giocati.
     </p>
     <div class="mt-9 flex flex-col items-center gap-4" data-intro style="--intro-index:6">
       <Cta class="justify-center" />
-      <p class="text-caption text-muted">Per Mac, Windows e iPhone. Senza abbonamento.</p>
+      <p class="text-caption text-muted">Gratis, su telefono e computer.</p>
     </div>
   </div>
   <div class="container-site mt-14 sm:mt-20">
     <div class="hero-phone mx-auto" data-scroll-zoom>
       <DeviceFrame variant="phone" width={720} height={1558}>
-        <Clip id="clip-preview" displayWidth={280} eager />
+        <EditorDemo />
       </DeviceFrame>
     </div>
   </div>

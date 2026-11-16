@@ -45,7 +45,11 @@ const Clip = Base.extend({
   file: z.string().endsWith(".mp4"),
   /** Id of the still used as poster. */
   poster: z.string(),
-  durationSeconds: z.number().max(15),
+  /** "loop": short silent loop (max 15 s). "demo": the hero editor excerpt (max 150 s). */
+  role: z.enum(["loop", "demo"]).default("loop"),
+  durationSeconds: z.number().positive(),
+}).refine((c) => c.durationSeconds <= (c.role === "demo" ? 150 : 15), {
+  message: "clip too long: loops are at most 15 s, the demo excerpt at most 150 s",
 });
 
 const Entry = z.discriminatedUnion("kind", [Still, Clip]);
@@ -55,6 +59,8 @@ export type ClipEntry = z.infer<typeof Clip>;
 
 // Footage cleared for public use by the site owner's decision (12 Nov 2026).
 const ITTF = { source: "ITTF/WTT broadcast, Doha 2025 (Kim Kum Yong match, 2-minute clip)", cleared: true };
+const ITTF_DEMO = { source: "ITTF/WTT broadcast, Doha 2025 (Kim Kum Yong vs Christina Kallberg), excerpt 0-140 s cut by scripts/make-demo-media.mjs", cleared: true };
+const DEMO = "Excerpt of the source video of the Danamus project \"KIM KUM YONG vs CHRISTINA KALLBERG\" (segments curated by hand), shown in the site's editor demo UI";
 const NOFOOTAGE = { source: "none (no match frame visible)", cleared: true };
 const NONE = { source: "none (placeholder)", cleared: true };
 const MAC = "Danamus 0.1.0 (5517d29) desktop production build on macOS, 1x window-only capture (ScreenCaptureKit / screencapture -l), demo library";
@@ -83,9 +89,6 @@ const raw = [
   { kind: "still", id: "ios-projects", platform: "ios", captureSource: IOS, screen: "project list",
     file: "ios/projects.png", width: 1170, height: 2532, capturedAt: SHOT, footage: NOFOOTAGE,
     alt: "Danamus su iPhone: l'elenco dei progetti, con quello nuovo pronto in cima." },
-  { kind: "still", id: "ios-log", platform: "ios", captureSource: IOS, screen: "analysis log",
-    file: "ios/log.png", width: 1170, height: 2532, capturedAt: SHOT, footage: NOFOOTAGE,
-    alt: "Danamus su iPhone: il log di analisi del modello YOLO eseguito sul dispositivo, con 11 scambi trovati." },
   { kind: "still", id: "ios-fullscreen", platform: "ios", captureSource: IOS, screen: "full-screen preview",
     file: "ios/fullscreen.png", width: 2532, height: 1170, capturedAt: SHOT, footage: ITTF,
     alt: "Danamus su iPhone: l'anteprima della partita a schermo intero." },
@@ -105,8 +108,8 @@ const raw = [
     file: "ios/posters/preview.png", width: 720, height: 1558, capturedAt: CLIPS, footage: ITTF,
     alt: "Danamus su iPhone: l'anteprima della partita montata." },
   { kind: "still", id: "poster-macos-editor", platform: "macos", captureSource: MAC, screen: "editor",
-    file: "macos/posters/editor.png", width: 1280, height: 800, capturedAt: CLIPS, footage: ITTF,
-    alt: "Danamus su Mac: l'editor con lo scambio 1 selezionato sulla timeline." },
+    file: "macos/posters/editor.png", width: 1280, height: 800, capturedAt: "2026-11-16", footage: ITTF_DEMO,
+    alt: "Danamus su Mac: l'editor della partita Kim Kum Yong contro Christina Kallberg, con i 19 scambi sulla timeline." },
   { kind: "clip", id: "clip-analysis", platform: "ios", captureSource: IOS_REC, screen: "analysis in progress",
     file: "analysis.mp4", poster: "poster-analysis", durationSeconds: 12, width: 720, height: 1558,
     capturedAt: CLIPS, footage: NOFOOTAGE,
@@ -121,18 +124,24 @@ const raw = [
     alt: "Video: l'anteprima riproduce la partita saltando da uno scambio all'altro, senza i tempi morti." },
   { kind: "clip", id: "clip-macos-editor", platform: "macos", captureSource: MAC, screen: "editor",
     file: "macos-editor.mp4", poster: "poster-macos-editor", durationSeconds: 15, width: 1280, height: 800,
-    capturedAt: CLIPS, footage: ITTF,
-    alt: "Video: nell'editor su Mac si seleziona uno scambio sulla timeline, se ne allunga la fine e parte l'anteprima." },
+    capturedAt: "2026-11-16", footage: ITTF_DEMO,
+    alt: "Video: nell'editor su Mac la partita scorre sul primo scambio, poi si sceglie il terzo dalla lista dei segmenti." },
+  { kind: "still", id: "demo-poster", platform: "ios", captureSource: DEMO, screen: "editor demo",
+    file: "demo/poster.jpg", width: 640, height: 360, capturedAt: "2026-11-16", footage: ITTF_DEMO,
+    alt: "La partita Kim Kum Yong contro Christina Kallberg durante uno scambio." },
+  { kind: "clip", id: "demo-match", platform: "ios", captureSource: DEMO, screen: "editor demo",
+    file: "demo-match.mp4", poster: "demo-poster", role: "demo", durationSeconds: 140, width: 640, height: 360,
+    capturedAt: "2026-11-16", footage: ITTF_DEMO,
+    alt: "Video della partita Kim Kum Yong contro Christina Kallberg, nell'editor dimostrativo." },
 ] as const;
 
 export const media: MediaEntry[] = z.array(Entry).parse(raw);
 
 /** Ids the page needs; the build fails if any is missing or has no file. */
+// Only what the site shows is required (spec: product-media). Other manifest
+// entries (older walkthrough captures) stay available but optional.
 export const requiredMedia = [
-  "ios-picker", "ios-area", "ios-analysis", "ios-editor", "ios-export", "ios-projects", "ios-log",
-  "ios-fullscreen", "macos-editor", "windows-editor", "poster-macos-editor", "clip-macos-editor",
-  "poster-analysis", "poster-editing", "poster-preview",
-  "clip-analysis", "clip-editing", "clip-preview",
+  "demo-match", "demo-poster", "clip-macos-editor", "poster-macos-editor", "ios-editor", "ios-fullscreen",
 ] as const;
 export type MediaId = (typeof requiredMedia)[number];
 

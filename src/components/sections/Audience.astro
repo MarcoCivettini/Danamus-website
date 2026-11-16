@@ -1,0 +1,40 @@
+---
+import Icon, { type IconName } from "../Icon.astro";
+
+const groups: { title: string; text: string; icon: IconName }[] = [
+  { title: "Creator", text: "Porti il ping pong sui social con video fatti di scambi, senza passare la serata a montare.", icon: "megaphone" },
+  { title: "Chi si allena", text: "Ti registri, rivedi solo i punti e capisci cosa cambiare prima del prossimo allenamento.", icon: "target" },
+  { title: "Chi vuole rivedersi", text: "Ritrovi i punti migliori della partita con gli amici e glieli mandi la sera stessa.", icon: "share" },
+];
+---
+<section id="per-chi" class="mt-[var(--section-gap)]" aria-labelledby="audience-title">
+  <div class="container-site">
+    <p class="eyebrow" data-reveal>Per chi è</p>
+    <h2 id="audience-title" class="text-section-sm mt-4 max-w-[16ch] text-balance" data-split>
+      Un telefono, un cavalletto, la partita.
+    </h2>
+    <ul class="mt-14 grid gap-4 sm:mt-16 sm:grid-cols-3 sm:gap-5" role="list">
+      {groups.map((g, i) => (
+        <li class="audience-card" data-reveal style={`--reveal-index:${i + 2}`}>
+          <span class="audience-card__icon"><Icon name={g.icon} size={26} /></span>
+          <h3 class="text-lead mt-10 font-semibold sm:mt-16">{g.title}</h3>
+          <p class="text-soft mt-2">{g.text}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .audience-card {
+    padding: clamp(24px, 3vw, 36px);
+    border-radius: 20px;
+    background: var(--surface-2);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.06);
+  }
+  .audience-card__icon {
+    display: grid; place-items: center; width: 52px; height: 52px; border-radius: 14px;
+    color: var(--accent);
+    background: color-mix(in oklch, var(--accent) 12%, transparent);
+  }
+</style>

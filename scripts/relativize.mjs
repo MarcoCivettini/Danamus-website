@@ -22,7 +22,15 @@ for (const file of walk(out)) {
   if (file.endsWith(".html")) {
     text = text
       .replace(/(\s(?:src|href|poster|data-src)=")\/(?!\/)/g, `$1${prefix}`)
-      .replace(/(\ssrcset=")([^"]+)"/g, (_, a, set) => a + set.replace(/(^|,\s*)\/(?!\/)/g, `$1${prefix}`) + '"');
+      .replace(/(\ssrcset=")([^"]+)"/g, (_, a, set) => a + set.replace(/(^|,\s*)\/(?!\/)/g, `$1${prefix}`) + '"')
+      // Page links ("./prezzi/", "../#per-chi") name the file explicitly: the
+      // preview host does not map a directory to its index.html.
+      .replace(/(\shref=")((?:\.\.?\/)+(?:[\w-]+\/)*)(#[^"]*)?"/g, (_, a, dir, hash = "") => `${a}${dir}index.html${hash}"`)
+      // The preview host wraps the page in a frame that sets an unlayered
+      // body { background: #fff; color: #000 }, which beats the site's layered
+      // styles. The body must stay transparent (the page colour is on html),
+      // otherwise it covers the pointer glow behind the content (preview only).
+      .replace("</head>", "<style>body{background:transparent;color:var(--fg)}</style></head>");
   } else if (file.endsWith(".css")) {
     text = text.replace(/url\(\s*(["']?)\/(?!\/)/g, `url($1${prefix}`);
   } else {

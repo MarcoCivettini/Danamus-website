@@ -1,0 +1,21 @@
+---
+import { withBase } from "../../site.config";
+---
+<section id="prezzi" class="mt-[var(--section-gap)]" aria-labelledby="pricing-title">
+  <div class="container-site grid gap-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end lg:gap-16">
+    <div>
+      <p class="eyebrow" data-reveal>Prezzi</p>
+      <h2 id="pricing-title" class="text-section-sm mt-4 max-w-[16ch] text-balance" data-split>
+        Gratis per rivedere le tue partite.
+      </h2>
+      <p class="text-lead text-soft mt-6 max-w-[40ch]" data-reveal style="--reveal-index:2">
+        Analisi, editor ed esportazione del video completo sono gratuiti. Per chi registra e pubblica spesso arriverà il piano Pro.
+      </p>
+    </div>
+    <p data-reveal style="--reveal-index:3">
+      <a href={withBase("/prezzi/")} class="inline-flex min-h-11 items-center gap-2 font-medium text-accent underline-offset-4 hover:underline">
+        Confronta i piani <span aria-hidden="true">→</span>
+      </a>
+    </p>
+  </div>
+</section>

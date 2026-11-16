@@ -28,6 +28,8 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: Check media rights
         run: pnpm check:media-rights
+      - name: Check legal pages are filled in
+        run: pnpm check:legal
       - name: Build
         run: pnpm build
         env:

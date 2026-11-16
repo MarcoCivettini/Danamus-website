@@ -1,0 +1,35 @@
+---
+import Timeline from "../Timeline.astro";
+
+// 20 / 5 minutes and the hour of manual editing are the author's experience,
+// so they are worded as typical and approximate.
+// "3 o 4 secondi" per rally: rally ~3.5 s and rest 8-20 s in official matches
+// (review, PMC8623913: https://pmc.ncbi.nlm.nih.gov/articles/PMC8623913);
+// mean rally 3.4 s, rest 8.1 s (J. Hum. Kinet. 2016, doi 10.1515/hukin-2016-0048).
+const figures = [
+  { value: "20 min", label: "il video di una partita tipica" },
+  { value: "5 min", label: "il tempo in cui si gioca davvero" },
+  { value: "1 ora", label: "circa, per tagliarlo a mano" },
+];
+---
+<section id="perche" class="band mt-[var(--section-gap)]" aria-labelledby="problem-title">
+  <div class="container-site">
+    <p class="eyebrow" data-reveal>Perché Danamus</p>
+    <h2 id="problem-title" class="text-section mt-4 max-w-[16ch] text-balance" data-split>
+      Venti minuti di video, cinque di gioco.
+    </h2>
+    <div class="mt-14 sm:mt-20" data-reveal style="--reveal-index:2"><Timeline /></div>
+    <ul class="mt-16 grid gap-10 sm:mt-20 sm:grid-cols-3" role="list">
+      {figures.map((f, i) => (
+        <li data-reveal style={`--reveal-index:${i + 2}`}>
+          <span class="block h-px w-10 bg-accent" aria-hidden="true"></span>
+          <p class="text-step tabular mt-5">{f.value}</p>
+          <p class="text-soft mt-2">{f.label}</p>
+        </li>
+      ))}
+    </ul>
+    <p class="text-lead text-soft mt-14 max-w-[52ch] text-pretty" data-reveal style="--reveal-index:5">
+      Riguardarti è il modo più rapido per capire come giochi: dove sbagli il servizio, quando resti troppo lontano dal tavolo. Il problema è tutto il resto. Uno scambio dura in media 3 o 4 secondi, e tra un punto e l'altro ci sono palline da raccogliere, pause e cambi di campo. Riguardare la registrazione intera vuol dire aspettare quindici minuti per vederne cinque.
+    </p>
+  </div>
+</section>
